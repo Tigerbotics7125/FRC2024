@@ -13,11 +13,11 @@ java {
 project.compileJava.dependsOn(createVersionFile)
 gversion {
     srcDir = "src/main/java"
-    classPackage = "io.github.tigerbotics7125.robot"
+    classPackage = "io.github.tigerbotics7125"
     className = "BuildConstants"
     dateFormat = "yyyy-MM-dd HH:mm:ss z"
     timeZone = "America/Chicago"
-    indent = "  "
+    indent = "    "
 }
 
 def ROBOT_MAIN_CLASS = "io.github.tigerbotics7125.Main"
@@ -109,7 +109,7 @@ spotless {
     java {
         target fileTree('.') {
             include '**/*.java'
-            exclude '**/build/**', '**/build-*/**'
+            exclude '**/build/**', '**/build-*/**', '**/BuildConstants.java'
         }
         licenseHeaderFile 'LICENSE_SHORTHAND'
         importOrder('\\#', 'io.github.tigerbotics7125.tigerLib', 'io.github.tigerbotics7125', 'edu.wpi', '')
