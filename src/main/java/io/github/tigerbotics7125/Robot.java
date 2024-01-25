@@ -8,12 +8,14 @@ package io.github.tigerbotics7125;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj.motorcontrol.PWMTalonSRX;
+import edu.wpi.first.wpilibj.motorcontrol.*;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import io.github.tigerbotics7125.commands.ExampleCommand;
 import io.github.tigerbotics7125.subsystems.ExampleSubsystem;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 // import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
@@ -32,8 +34,8 @@ public class Robot extends TimedRobot {
 
     // Additional controllers may be added if needed.
 
-    private PWMTalonSRX leftMotor = new PWMTalonSRX(1);
-    private PWMTalonSRX rightMotor = new PWMTalonSRX(2);
+    private WPI_TalonSRX leftMotor = new WPI_TalonSRX(1);
+    private WPI_TalonSRX rightMotor = new WPI_TalonSRX(2);
     private DifferentialDrive mDrive = new DifferentialDrive(leftMotor, rightMotor);
     private XboxController mXbox = new XboxController(0);
 
