@@ -10,7 +10,6 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.*;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -22,12 +21,9 @@ import io.github.tigerbotics7125.subsystems.ExampleSubsystem;
 // import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 /**
- * The VM is configured to automatically run this class, and to call the
- * functions corresponding to
- * each mode, as described in the TimedRobot documentation. If you change the
- * name of this class or
- * the package after creating this project, you must also update the
- * build.gradle file in the
+ * The VM is configured to automatically run this class, and to call the functions corresponding to
+ * each mode, as described in the TimedRobot documentation. If you change the name of this class or
+ * the package after creating this project, you must also update the build.gradle file in the
  * project.
  */
 public class Robot extends TimedRobot {
@@ -58,8 +54,7 @@ public class Robot extends TimedRobot {
      * private XboxController mXbox = new XboxController(0);
      */
     /**
-     * This function is run when the robot is first started up and should be used
-     * for any
+     * This function is run when the robot is first started up and should be used for any
      * initialization code.
      */
     @Override
@@ -74,17 +69,12 @@ public class Robot extends TimedRobot {
     }
 
     /**
-     * Use this method to define your trigger->command mappings. Triggers can be
-     * created via the
-     * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with
-     * an arbitrary
+     * Use this method to define your trigger->command mappings. Triggers can be created via the
+     * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with an arbitrary
      * predicate, or via the named factories in {@link
-     * edu.wpi.first.wpilibj2.command.button.CommandGenericHID}'s subclasses for
-     * {@link
-     * CommandXboxController
-     * Xbox}/{@link edu.wpi.first.wpilibj2.command.button.CommandPS4Controller
-     * PS4} controllers or
-     * {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
+     * edu.wpi.first.wpilibj2.command.button.CommandGenericHID}'s subclasses for {@link
+     * CommandXboxController Xbox}/{@link edu.wpi.first.wpilibj2.command.button.CommandPS4Controller
+     * PS4} controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
      * joysticks}.
      */
     private void configureBindings() {
@@ -99,13 +89,10 @@ public class Robot extends TimedRobot {
     }
 
     /**
-     * This function is called every 20 ms, no matter the mode. Use this for items
-     * like diagnostics
+     * This function is called every 20 ms, no matter the mode. Use this for items like diagnostics
      * that you want ran during disabled, autonomous, teleoperated and test.
      *
-     * <p>
-     * This runs after the mode specific periodic functions, but before LiveWindow
-     * and
+     * <p>This runs after the mode specific periodic functions, but before LiveWindow and
      * SmartDashboard integrated updating.
      */
     @Override
@@ -122,16 +109,13 @@ public class Robot extends TimedRobot {
 
     /** This function is called once each time the robot enters Disabled mode. */
     @Override
-    public void disabledInit() {
-    }
+    public void disabledInit() {}
 
     @Override
-    public void disabledPeriodic() {
-    }
+    public void disabledPeriodic() {}
 
     /**
-     * This autonomous runs the autonomous command selected by your
-     * {@link RobotContainer} class.
+     * This autonomous runs the autonomous command selected by your {@link RobotContainer} class.
      */
     @Override
     public void autonomousInit() {
@@ -143,8 +127,7 @@ public class Robot extends TimedRobot {
 
     /** This function is called periodically during autonomous. */
     @Override
-    public void autonomousPeriodic() {
-    }
+    public void autonomousPeriodic() {}
 
     @Override
     public void teleopInit() {
@@ -153,11 +136,6 @@ public class Robot extends TimedRobot {
         // continue until interrupted by another command, remove
         // this line or comment it out.
         driveSelect = m_chooser.getSelected();
-        
-
-        
-
-
     }
 
     /** This function is called periodically during operator control. */
@@ -167,30 +145,23 @@ public class Robot extends TimedRobot {
         driveSelect = m_chooser.getSelected();
         System.out.println("Drive mode: " + driveSelect);
 
-    switch (driveSelect){
-        case "Tank Drive":
-        mDrive.tankDrive(mXbox.getLeftY(), mXbox.getRightY());
-        break;
-        
-        case "Arcade Drive":
-        mDrive.arcadeDrive(mXbox.getLeftY(), mXbox.getLeftX(), false);
+        switch (driveSelect) {
+            case "Tank Drive":
+                mDrive.tankDrive(mXbox.getLeftY(), mXbox.getRightY());
+                break;
 
-        break;
+            case "Arcade Drive":
+                mDrive.arcadeDrive(mXbox.getLeftY(), mXbox.getLeftX(), false);
 
-        default:
-        break;
-    }    
+                break;
 
-    
-    SmartDashboard.putNumber("Left Motor Value", leftMotor.get());
-    SmartDashboard.putNumber("Right Motor Value", rightMotor.get());
-    
+            default:
+                break;
+        }
 
+        SmartDashboard.putNumber("Left Motor Value", leftMotor.get());
+        SmartDashboard.putNumber("Right Motor Value", rightMotor.get());
     }
-
-
-
-    
 
     @Override
     public void testInit() {
@@ -200,16 +171,13 @@ public class Robot extends TimedRobot {
 
     /** This function is called periodically during test mode. */
     @Override
-    public void testPeriodic() {
-    }
+    public void testPeriodic() {}
 
     /** This function is called once when the robot is first started up. */
     @Override
-    public void simulationInit() {
-    }
+    public void simulationInit() {}
 
     /** This function is called periodically whilst in simulation. */
     @Override
-    public void simulationPeriodic() {
-    }
+    public void simulationPeriodic() {}
 }
