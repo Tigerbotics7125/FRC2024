@@ -55,6 +55,7 @@ public class Robot extends TimedRobot {
     public void robotInit() {
         // Configure the trigger bindings
         configureBindings();
+        leftMotor.setInverted(true);
     }
 
     /**
