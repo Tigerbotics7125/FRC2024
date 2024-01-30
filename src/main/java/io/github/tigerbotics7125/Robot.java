@@ -68,7 +68,6 @@ public class Robot extends TimedRobot {
         m_chooser.addOption("Arcade Drive", arcadeDrive);
         SmartDashboard.putData("Drive choices", m_chooser);
         CameraServer.startAutomaticCapture();
-
     }
 
     /**
