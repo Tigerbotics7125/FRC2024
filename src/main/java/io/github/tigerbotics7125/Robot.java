@@ -5,16 +5,17 @@
  */
 package io.github.tigerbotics7125;
 
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj.motorcontrol.PWMTalonSRX;
-import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj.motorcontrol.*;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import io.github.tigerbotics7125.Constants.OperatorConstants;
-import io.github.tigerbotics7125.commands.Autos;
 import io.github.tigerbotics7125.commands.ExampleCommand;
 import io.github.tigerbotics7125.subsystems.ExampleSubsystem;
 
@@ -27,7 +28,6 @@ import io.github.tigerbotics7125.subsystems.ExampleSubsystem;
  * project.
  */
 public class Robot extends TimedRobot {
-    private Command m_autonomousCommand;
 
     // private RobotContainer m_robotContainer;
 
@@ -35,13 +35,15 @@ public class Robot extends TimedRobot {
     private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
 
     // Additional controllers may be added if needed.
-    private final CommandXboxController m_driverController =
-            new CommandXboxController(OperatorConstants.kDriverControllerPort);
 
-    private PWMTalonSRX leftMotor = new PWMTalonSRX(1);
-    private PWMTalonSRX rightMotor = new PWMTalonSRX(2);
+    private WPI_TalonSRX leftMotor = new WPI_TalonSRX(1);
+    private WPI_TalonSRX rightMotor = new WPI_TalonSRX(2);
     private DifferentialDrive mDrive = new DifferentialDrive(leftMotor, rightMotor);
     private XboxController mXbox = new XboxController(0);
+    String tankDrive = "Tank Drive";
+    String arcadeDrive = "Arcade Drive";
+    String driveSelect;
+    SendableChooser<String> m_chooser = new SendableChooser<>();
 
     /*
      * private CANSparkMax mLeft1 = new CANSparkMax(0, MotorType.kBrushed);
@@ -60,6 +62,12 @@ public class Robot extends TimedRobot {
     public void robotInit() {
         // Configure the trigger bindings
         configureBindings();
+        leftMotor.setInverted(true);
+
+        m_chooser.setDefaultOption("Tank Drive", tankDrive);
+        m_chooser.addOption("Arcade Drive", arcadeDrive);
+        SmartDashboard.putData("Drive choices", m_chooser);
+        CameraServer.startAutomaticCapture();
     }
 
     /**
@@ -79,7 +87,7 @@ public class Robot extends TimedRobot {
         // Schedule 'exampleMethodCommand' when the Xbox controller's B button is
         // pressed,
         // cancelling on release.
-        m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
+
     }
 
     /**
@@ -98,7 +106,7 @@ public class Robot extends TimedRobot {
         // and running subsystem periodic() methods. This must be called from the
         // robot's periodic
         // block in order for anything in the Command-based framework to work.
-        CommandScheduler.getInstance().run();
+
     }
 
     /** This function is called once each time the robot enters Disabled mode. */
@@ -114,12 +122,9 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousInit() {
         // An example command will be run in autonomous
-        m_autonomousCommand = Autos.exampleAuto(m_exampleSubsystem);
 
         // schedule the autonomous command (example)
-        if (m_autonomousCommand != null) {
-            m_autonomousCommand.schedule();
-        }
+
     }
 
     /** This function is called periodically during autonomous. */
@@ -132,15 +137,33 @@ public class Robot extends TimedRobot {
         // teleop starts running. If you want the autonomous to
         // continue until interrupted by another command, remove
         // this line or comment it out.
-        if (m_autonomousCommand != null) {
-            m_autonomousCommand.cancel();
-        }
-        mDrive.arcadeDrive(mXbox.getLeftY(), mXbox.getLeftX(), false);
+        driveSelect = m_chooser.getSelected();
     }
 
     /** This function is called periodically during operator control. */
     @Override
-    public void teleopPeriodic() {}
+    public void teleopPeriodic() {
+
+        driveSelect = m_chooser.getSelected();
+        System.out.println("Drive mode: " + driveSelect);
+
+        switch (driveSelect) {
+            case "Tank Drive":
+                mDrive.tankDrive(mXbox.getLeftY(), mXbox.getRightY());
+                break;
+
+            case "Arcade Drive":
+                mDrive.arcadeDrive(mXbox.getLeftY(), mXbox.getLeftX(), false);
+
+                break;
+
+            default:
+                break;
+        }
+
+        SmartDashboard.putNumber("Left Motor Value", leftMotor.get());
+        SmartDashboard.putNumber("Right Motor Value", rightMotor.get());
+    }
 
     @Override
     public void testInit() {
