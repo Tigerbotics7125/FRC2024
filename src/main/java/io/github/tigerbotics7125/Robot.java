@@ -6,6 +6,8 @@
 package io.github.tigerbotics7125;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -66,6 +68,9 @@ public class Robot extends TimedRobot {
         m_chooser.setDefaultOption("Tank Drive", tankDrive);
         m_chooser.addOption("Arcade Drive", arcadeDrive);
         SmartDashboard.putData("Drive choices", m_chooser);
+        CameraServer.startAutomaticCapture();
+        CameraServer.getVideo();
+        //CameraServer.getInstance().startAutomaticCapture();
     }
 
     /**
@@ -136,6 +141,7 @@ public class Robot extends TimedRobot {
         // continue until interrupted by another command, remove
         // this line or comment it out.
         driveSelect = m_chooser.getSelected();
+      
     }
 
     /** This function is called periodically during operator control. */
