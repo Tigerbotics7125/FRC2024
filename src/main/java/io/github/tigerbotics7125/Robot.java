@@ -65,10 +65,11 @@ public class Robot extends TimedRobot {
     public void robotInit() {
         // Configure the trigger bindings
         configureBindings();
-        leftMotor1.setInverted(true);
         leftMotor2.follow(leftMotor1);
-        leftMotor2.setInverted(true);
         rightMotor2.follow(rightMotor1);
+        
+        leftMotor1.setInverted(true);
+        leftMotor2.setInverted(true);
 
         m_chooser.setDefaultOption("Tank Drive", tankDrive);
         m_chooser.addOption("Arcade Drive", arcadeDrive);
