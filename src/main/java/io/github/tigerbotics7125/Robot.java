@@ -41,7 +41,6 @@ public class Robot extends TimedRobot {
     private WPI_TalonSRX leftMotor2;
     private WPI_TalonSRX rightMotor2;
 
-    
     private DifferentialDrive mDrive = new DifferentialDrive(leftMotor1, rightMotor1);
     private XboxController mXbox = new XboxController(0);
     String tankDrive = "Tank Drive";
