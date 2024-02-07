@@ -38,7 +38,7 @@ public class Robot extends TimedRobot {
 
     private WPI_TalonSRX leftMotor1 = new WPI_TalonSRX(1);
     private WPI_TalonSRX rightMotor1 = new WPI_TalonSRX(2);
-    private WPI_TalonSRX leftMotor2 = new WPI_TalonSRX(3) ;
+    private WPI_TalonSRX leftMotor2 = new WPI_TalonSRX(3);
     private WPI_TalonSRX rightMotor2 = new WPI_TalonSRX(4);
 
     private DifferentialDrive mDrive = new DifferentialDrive(leftMotor1, rightMotor1);
