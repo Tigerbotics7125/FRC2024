@@ -67,7 +67,7 @@ public class Robot extends TimedRobot {
         configureBindings();
         leftMotor2.follow(leftMotor1);
         rightMotor2.follow(rightMotor1);
-        
+
         leftMotor1.setInverted(true);
         leftMotor2.setInverted(true);
 
