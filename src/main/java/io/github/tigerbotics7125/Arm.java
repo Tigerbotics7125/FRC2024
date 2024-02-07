@@ -4,26 +4,24 @@
  * found in the root directory of this project.
  */
 package io.github.tigerbotics7125;
+
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 
 public class Arm {
     WPI_TalonSRX armMotor1 = new WPI_TalonSRX(5);
     WPI_TalonSRX armMotor2 = new WPI_TalonSRX(6);
-    DifferentialDrive armDrive = new DifferentialDrive(armMotor1,armMotor2);
+    DifferentialDrive armDrive = new DifferentialDrive(armMotor1, armMotor2);
 
-    public static void raiseArm(DifferentialDrive armDrive){
+    public static void raiseArm(DifferentialDrive armDrive) {
         armDrive.tankDrive(0.25, 0.25);
-
     }
-    public static void lowerArm(DifferentialDrive armDrive){
+
+    public static void lowerArm(DifferentialDrive armDrive) {
         armDrive.tankDrive(-0.25, -0.25);
-
     }
-    public static void stopArm(DifferentialDrive armDrive){
+
+    public static void stopArm(DifferentialDrive armDrive) {
         armDrive.tankDrive(0, 0);
-
     }
-
-
 }
