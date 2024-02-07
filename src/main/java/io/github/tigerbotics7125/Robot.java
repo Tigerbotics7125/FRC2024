@@ -36,9 +36,13 @@ public class Robot extends TimedRobot {
 
     // Additional controllers may be added if needed.
 
-    private WPI_TalonSRX leftMotor = new WPI_TalonSRX(1);
-    private WPI_TalonSRX rightMotor = new WPI_TalonSRX(2);
-    private DifferentialDrive mDrive = new DifferentialDrive(leftMotor, rightMotor);
+    private WPI_TalonSRX leftMotor1 = new WPI_TalonSRX(1);
+    private WPI_TalonSRX rightMotor1 = new WPI_TalonSRX(2);
+    private WPI_TalonSRX leftMotor2;
+    private WPI_TalonSRX rightMotor2;
+
+    
+    private DifferentialDrive mDrive = new DifferentialDrive(leftMotor1, rightMotor1);
     private XboxController mXbox = new XboxController(0);
     String tankDrive = "Tank Drive";
     String arcadeDrive = "Arcade Drive";
@@ -62,7 +66,10 @@ public class Robot extends TimedRobot {
     public void robotInit() {
         // Configure the trigger bindings
         configureBindings();
-        leftMotor.setInverted(true);
+        leftMotor1.setInverted(true);
+        leftMotor2.follow(leftMotor1);
+        leftMotor2.setInverted(true);
+        rightMotor2.follow(rightMotor1);
 
         m_chooser.setDefaultOption("Tank Drive", tankDrive);
         m_chooser.addOption("Arcade Drive", arcadeDrive);
@@ -161,8 +168,8 @@ public class Robot extends TimedRobot {
                 break;
         }
 
-        SmartDashboard.putNumber("Left Motor Value", leftMotor.get());
-        SmartDashboard.putNumber("Right Motor Value", rightMotor.get());
+        SmartDashboard.putNumber("Left Motor Value", leftMotor1.get());
+        SmartDashboard.putNumber("Right Motor Value", rightMotor1.get());
     }
 
     @Override
