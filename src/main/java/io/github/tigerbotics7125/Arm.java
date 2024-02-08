@@ -6,22 +6,29 @@
 package io.github.tigerbotics7125;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+
 
 public class Arm {
     WPI_TalonSRX armMotor1 = new WPI_TalonSRX(5);
     WPI_TalonSRX armMotor2 = new WPI_TalonSRX(6);
-    DifferentialDrive armDrive = new DifferentialDrive(armMotor1, armMotor2);
+    
 
-    public static void raiseArm(DifferentialDrive armDrive) {
-        armDrive.tankDrive(0.25, 0.25);
+    
+    public void raiseArm(WPI_TalonSRX armMotor1, WPI_TalonSRX armMotor2) {
+        
+        armMotor1.set(.25);
+        armMotor2.set(.25);
     }
 
-    public static void lowerArm(DifferentialDrive armDrive) {
-        armDrive.tankDrive(-0.25, -0.25);
+    public void lowerArm(WPI_TalonSRX armMotor1, WPI_TalonSRX armMotor2) {
+        
+        armMotor1.set(-.25);
+        armMotor2.set(-.25);
+    }
+    public void stopArm(WPI_TalonSRX armMotor1, WPI_TalonSRX armMotor2) {
+        
+        armMotor1.set(0);
+        armMotor2.set(0);
+    }
     }
 
-    public static void stopArm(DifferentialDrive armDrive) {
-        armDrive.tankDrive(0, 0);
-    }
-}
