@@ -14,16 +14,27 @@ public class Arm {
     
 
     
-    public void raiseArm(WPI_TalonSRX armMotor1, WPI_TalonSRX armMotor2) {
+    public void raiseArm(WPI_TalonSRX armMotor1, WPI_TalonSRX armMotor2, double upStopAngle, double encocoderPlaceHolder) {
         
-        armMotor1.set(.25);
-        armMotor2.set(.25);
+        if(encocoderPlaceHolder < upStopAngle){
+           armMotor1.set(.25);
+        armMotor2.set(.25); 
+        }
+        else{
+            stopArm(armMotor1, armMotor2);
+        }
+        
     }
 
-    public void lowerArm(WPI_TalonSRX armMotor1, WPI_TalonSRX armMotor2) {
+    public void lowerArm(WPI_TalonSRX armMotor1, WPI_TalonSRX armMotor2, double downStopAngle, double encocoderPlaceHolder) {
         
-        armMotor1.set(-.25);
-        armMotor2.set(-.25);
+        if(encocoderPlaceHolder > downStopAngle){
+           armMotor1.set(-.25);
+        armMotor2.set(-.25); 
+        }
+        else{
+            stopArm(armMotor1, armMotor2);
+        }
     }
     public void stopArm(WPI_TalonSRX armMotor1, WPI_TalonSRX armMotor2) {
         
