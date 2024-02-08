@@ -10,17 +10,15 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 public class Arm {
     WPI_TalonSRX armMotor1 = new WPI_TalonSRX(5);
     WPI_TalonSRX armMotor2 = new WPI_TalonSRX(6);
-    
 
-    
     public void raiseArm(WPI_TalonSRX armMotor1, WPI_TalonSRX armMotor2) {
-        
+
         armMotor1.set(.25);
         armMotor2.set(.25);
     }
 
     public void lowerArm(WPI_TalonSRX armMotor1, WPI_TalonSRX armMotor2) {
-        
+
         armMotor1.set(-.25);
         armMotor2.set(-.25);
     }
