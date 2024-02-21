@@ -176,3 +176,6 @@ logs/
 
 # Folder that has CTRE Phoenix Sim device config storage
 ctre_sim/
+simgui-ds.json
+simgui.json
+src/main/java/io/github/tigerbotics7125/BuildConstants.java
