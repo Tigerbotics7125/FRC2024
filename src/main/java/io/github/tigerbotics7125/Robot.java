@@ -5,7 +5,7 @@
  */
 package io.github.tigerbotics7125;
 
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+//import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
@@ -19,7 +19,8 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import io.github.tigerbotics7125.commands.ExampleCommand;
 import io.github.tigerbotics7125.subsystems.ExampleSubsystem;
 
-// import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkLowLevel.MotorType;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -32,17 +33,25 @@ public class Robot extends TimedRobot {
     // private RobotContainer m_robotContainer;
 
     // The robot's subsystems and commands are defined here...
-    private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
+    
 
     // Additional controllers may be added if needed.
 
-    private WPI_TalonSRX leftMotor1 = new WPI_TalonSRX(1);
-    private WPI_TalonSRX rightMotor1 = new WPI_TalonSRX(2);
-    private WPI_TalonSRX leftMotor2 = new WPI_TalonSRX(3);
-    private WPI_TalonSRX rightMotor2 = new WPI_TalonSRX(4);
+    private CANSparkMax leftMotor1 = new CANSparkMax(1, MotorType.kBrushless);
+    private CANSparkMax rightMotor1 = new CANSparkMax(2, MotorType.kBrushless);
+    private CANSparkMax leftMotor2 = new CANSparkMax(3, MotorType.kBrushless);
+    private CANSparkMax rightMotor2 = new CANSparkMax(4, MotorType.kBrushless);
+
+    int intakeID = 5;
+    int shooterLeftID = 6;
+    int shooterRightID = 7;
+    double shooterSpeed = 1;
+    double intakeSpeed = 1;
+    Intake kIntake;
 
     private DifferentialDrive mDrive = new DifferentialDrive(leftMotor1, rightMotor1);
-    private XboxController mXbox = new XboxController(0);
+    private XboxController mXboxDrive = new XboxController(0);
+    private XboxController mXboxOperator = new XboxController(1);
     String tankDrive = "Tank Drive";
     String arcadeDrive = "Arcade Drive";
     String driveSelect;
@@ -64,7 +73,7 @@ public class Robot extends TimedRobot {
     @Override
     public void robotInit() {
         // Configure the trigger bindings
-        configureBindings();
+        
         leftMotor2.follow(leftMotor1);
         rightMotor2.follow(rightMotor1);
 
@@ -75,27 +84,11 @@ public class Robot extends TimedRobot {
         m_chooser.addOption("Arcade Drive", arcadeDrive);
         SmartDashboard.putData("Drive choices", m_chooser);
         CameraServer.startAutomaticCapture();
+
+        kIntake = new Intake(intakeID, shooterLeftID, shooterRightID, shooterSpeed, intakeSpeed);
     }
 
-    /**
-     * Use this method to define your trigger->command mappings. Triggers can be created via the
-     * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with an arbitrary
-     * predicate, or via the named factories in {@link
-     * edu.wpi.first.wpilibj2.command.button.CommandGenericHID}'s subclasses for {@link
-     * CommandXboxController Xbox}/{@link edu.wpi.first.wpilibj2.command.button.CommandPS4Controller
-     * PS4} controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
-     * joysticks}.
-     */
-    private void configureBindings() {
-        // Schedule 'ExampleCommand' when 'exampleCondition' changes to 'true'
-        new Trigger(m_exampleSubsystem::exampleCondition)
-                .onTrue(new ExampleCommand(m_exampleSubsystem));
-
-        // Schedule 'exampleMethodCommand' when the Xbox controller's B button is
-        // pressed,
-        // cancelling on release.
-
-    }
+   
 
     /**
      * This function is called every 20 ms, no matter the mode. Use this for items like diagnostics
@@ -145,6 +138,11 @@ public class Robot extends TimedRobot {
         // continue until interrupted by another command, remove
         // this line or comment it out.
         driveSelect = m_chooser.getSelected();
+
+        SmartDashboard.putNumber("Intake Speed", 0);
+        SmartDashboard.putNumber("Shooter Speed", 1);
+        
+        
     }
 
     /** This function is called periodically during operator control. */
@@ -156,20 +154,40 @@ public class Robot extends TimedRobot {
 
         switch (driveSelect) {
             case "Tank Drive":
-                mDrive.tankDrive(mXbox.getLeftY(), mXbox.getRightY());
+                mDrive.tankDrive(mXboxDrive.getLeftY(), mXboxDrive.getRightY());
                 break;
 
             case "Arcade Drive":
-                mDrive.arcadeDrive(mXbox.getLeftY(), mXbox.getLeftX(), false);
+                mDrive.arcadeDrive(mXboxDrive.getLeftY(), mXboxDrive.getLeftX(), false);
 
                 break;
 
             default:
                 break;
         }
-
+        
         SmartDashboard.putNumber("Left Motor Value", leftMotor1.get());
         SmartDashboard.putNumber("Right Motor Value", rightMotor1.get());
+
+        intakeSpeed = SmartDashboard.getNumber("Intake Speed", .5);
+        shooterSpeed = SmartDashboard.getNumber("Shooter Speed", 1);
+        
+        
+        
+        //Intake and shooter controls
+        if (mXboxOperator.getAButtonPressed()) {
+            kIntake.pickupRing(intakeSpeed);
+        } else {
+            kIntake.stopPickup();
+        }
+
+        if (mXboxOperator.getBButtonPressed()) {
+            kIntake.shootRing(shooterSpeed);
+        } else {
+            kIntake.stopShooter();
+        }
+
+
     }
 
     @Override
