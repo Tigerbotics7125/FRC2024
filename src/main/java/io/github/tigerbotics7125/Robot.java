@@ -148,7 +148,7 @@ public class Robot extends TimedRobot {
         // this line or comment it out.
         driveSelect = m_chooser.getSelected();
 
-        SmartDashboard.putNumber("Intake Speed", 0);
+        SmartDashboard.putNumber("Intake Speed", 1);
         SmartDashboard.putNumber("Shooter Speed", 1);
         
         
@@ -178,7 +178,7 @@ public class Robot extends TimedRobot {
         SmartDashboard.putNumber("Left Motor Value", leftMotor1.get());
         SmartDashboard.putNumber("Right Motor Value", rightMotor1.get());
 
-        intakeSpeed = SmartDashboard.getNumber("Intake Speed", .5);
+        intakeSpeed = SmartDashboard.getNumber("Intake Speed", 1);
         shooterSpeed = SmartDashboard.getNumber("Shooter Speed", 1);
         
         
