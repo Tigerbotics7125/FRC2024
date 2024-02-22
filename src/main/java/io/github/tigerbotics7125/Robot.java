@@ -32,10 +32,10 @@ public class Robot extends TimedRobot {
 
     // Additional controllers may be added if needed.
 
-    private CANSparkMax leftMotor1 = new CANSparkMax(1, MotorType.kBrushless);
-    private CANSparkMax rightMotor1 = new CANSparkMax(2, MotorType.kBrushless);
-    private CANSparkMax leftMotor2 = new CANSparkMax(3, MotorType.kBrushless);
-    private CANSparkMax rightMotor2 = new CANSparkMax(4, MotorType.kBrushless);
+    private CANSparkMax leftMotor1 = new CANSparkMax(1, MotorType.kBrushed);
+    private CANSparkMax rightMotor1 = new CANSparkMax(2, MotorType.kBrushed);
+    private CANSparkMax leftMotor2 = new CANSparkMax(3, MotorType.kBrushed);
+    private CANSparkMax rightMotor2 = new CANSparkMax(4, MotorType.kBrushed);
 
     int intakeID = 5;
     int shooterLeftID = 6;
