@@ -5,10 +5,7 @@
  */
 package io.github.tigerbotics7125;
 
-// import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-
-import com.revrobotics.CANSparkLowLevel.MotorType;
-import com.revrobotics.CANSparkMax;
+//import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
@@ -17,6 +14,14 @@ import edu.wpi.first.wpilibj.motorcontrol.*;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+import io.github.tigerbotics7125.commands.ExampleCommand;
+import io.github.tigerbotics7125.subsystems.ExampleSubsystem;
+
+
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkLowLevel.MotorType;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -29,6 +34,7 @@ public class Robot extends TimedRobot {
     // private RobotContainer m_robotContainer;
 
     // The robot's subsystems and commands are defined here...
+    
 
     // Additional controllers may be added if needed.
 
@@ -37,12 +43,18 @@ public class Robot extends TimedRobot {
     private CANSparkMax leftMotor2 = new CANSparkMax(3, MotorType.kBrushless);
     private CANSparkMax rightMotor2 = new CANSparkMax(4, MotorType.kBrushless);
 
+
+    
+
     int intakeID = 5;
     int shooterLeftID = 6;
     int shooterRightID = 7;
     double shooterSpeed = 1;
     double intakeSpeed = 1;
     Intake kIntake;
+    Arm mArm;
+    int armMotor1ID = 8;
+    int armMotor2ID = 9;
 
     private DifferentialDrive mDrive = new DifferentialDrive(leftMotor1, rightMotor1);
     private XboxController mXboxDrive = new XboxController(0);
@@ -68,7 +80,7 @@ public class Robot extends TimedRobot {
     @Override
     public void robotInit() {
         // Configure the trigger bindings
-
+        
         leftMotor2.follow(leftMotor1);
         rightMotor2.follow(rightMotor1);
 
@@ -81,7 +93,11 @@ public class Robot extends TimedRobot {
         CameraServer.startAutomaticCapture();
 
         kIntake = new Intake(intakeID, shooterLeftID, shooterRightID, shooterSpeed, intakeSpeed);
+        mArm = new Arm(armMotor1ID, armMotor2ID);
+
     }
+
+   
 
     /**
      * This function is called every 20 ms, no matter the mode. Use this for items like diagnostics
@@ -134,6 +150,8 @@ public class Robot extends TimedRobot {
 
         SmartDashboard.putNumber("Intake Speed", 0);
         SmartDashboard.putNumber("Shooter Speed", 1);
+        
+        
     }
 
     /** This function is called periodically during operator control. */
@@ -156,25 +174,44 @@ public class Robot extends TimedRobot {
             default:
                 break;
         }
-
+        
         SmartDashboard.putNumber("Left Motor Value", leftMotor1.get());
         SmartDashboard.putNumber("Right Motor Value", rightMotor1.get());
 
         intakeSpeed = SmartDashboard.getNumber("Intake Speed", .5);
         shooterSpeed = SmartDashboard.getNumber("Shooter Speed", 1);
-
-        // Intake and shooter controls
-        if (mXboxOperator.getAButtonPressed()) {
+        
+        
+        
+        //Intake and shooter controls
+        if (mXboxOperator.getRightBumperPressed()) {
             kIntake.pickupRing(intakeSpeed);
         } else {
             kIntake.stopPickup();
         }
 
-        if (mXboxOperator.getBButtonPressed()) {
+        if (mXboxOperator.getLeftBumperPressed()) {
             kIntake.shootRing(shooterSpeed);
         } else {
             kIntake.stopShooter();
         }
+
+        //Arm Controls
+        if(mXboxOperator.getYButtonPressed()){
+            mArm.moveToPostion(mArm.ampAngle);
+        }
+        else if(mXboxOperator.getXButtonPressed()){
+            mArm.moveToPostion(mArm.shootingAngle);
+        }
+        else if(mXboxOperator.getBButtonPressed()){
+            mArm.moveToPostion(mArm.downAngle);
+        }
+        else{
+            mArm.stopArm();
+        }
+
+
+        
     }
 
     @Override
