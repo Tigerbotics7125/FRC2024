@@ -23,6 +23,7 @@ public class Intake {
         this.shooterMotorLeft = new CANSparkMax(shooterLeftID, MotorType.kBrushless);
         this.shooterMotorRight = new CANSparkMax(shooterRightID, MotorType.kBrushless);
         this.intakeMotor = new CANSparkMax(intakeID, MotorType.kBrushless);
+        shooterMotorLeft.follow(shooterMotorRight);
     }
 
     public void pickupRing(double intakeSpeed) {
@@ -31,8 +32,6 @@ public class Intake {
     }
 
     public void shootRing(double shooterSpeed) {
-
-        shooterMotorLeft.follow(shooterMotorRight);
         shooterMotorRight.set(shooterSpeed);
     }
 
@@ -42,8 +41,6 @@ public class Intake {
     }
 
     public void stopShooter() {
-
-        shooterMotorLeft.follow(shooterMotorRight);
-        shooterMotorRight.set(0);
+     shooterMotorRight.set(0);
     }
 }
