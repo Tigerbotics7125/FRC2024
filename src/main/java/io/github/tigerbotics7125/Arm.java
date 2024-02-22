@@ -5,27 +5,57 @@
  */
 package io.github.tigerbotics7125;
 
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
+import edu.wpi.first.math.controller.PIDController;
 
 public class Arm {
-    WPI_TalonSRX armMotor1 = new WPI_TalonSRX(5);
-    WPI_TalonSRX armMotor2 = new WPI_TalonSRX(6);
+    CANSparkMax armMotor1;
+    CANSparkMax armMotor2;
+    
+    RelativeEncoder armEncoder;
+    double downAngle = 0;
+    double ampAngle = 180;
+    double shootingAngle = 90;
 
-    public void raiseArm(WPI_TalonSRX armMotor1, WPI_TalonSRX armMotor2) {
+    PIDController mPID;
+    double P_GAIN = 20; 
+    double I_GAIN = 0; 
+    double D_GAIN = .1; 
+
+    public Arm(int armMotor1ID, int armMotor2ID){
+        this.armMotor1 = new CANSparkMax(armMotor1ID, MotorType.kBrushless);
+        this.armMotor2 = new CANSparkMax(armMotor2ID, MotorType.kBrushless);
+        armMotor2.follow(armMotor1);
+        this.armEncoder = armMotor1.getEncoder();
+        mPID = new PIDController(P_GAIN, I_GAIN, D_GAIN);
+        
+    }
+
+    public void moveToPostion(double setPostion){
+        
+        double output = mPID.calculate(armEncoder.getPosition(), setPostion);
+        armMotor1.set(output);
+
+        }
+        
+    
+    public void raiseArm() {
 
         armMotor1.set(.25);
-        armMotor2.set(.25);
+        
     }
 
-    public void lowerArm(WPI_TalonSRX armMotor1, WPI_TalonSRX armMotor2) {
+    public void lowerArm() {
 
         armMotor1.set(-.25);
-        armMotor2.set(-.25);
+        
     }
 
-    public void stopArm(WPI_TalonSRX armMotor1, WPI_TalonSRX armMotor2) {
+    public void stopArm() {
 
         armMotor1.set(0);
-        armMotor2.set(0);
+        
     }
 }
