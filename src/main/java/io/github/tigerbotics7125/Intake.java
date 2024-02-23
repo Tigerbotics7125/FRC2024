@@ -41,6 +41,6 @@ public class Intake {
     }
 
     public void stopShooter() {
-     shooterMotorRight.set(0);
+        shooterMotorRight.set(0);
     }
 }
