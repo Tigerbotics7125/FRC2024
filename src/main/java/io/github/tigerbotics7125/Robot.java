@@ -75,16 +75,17 @@ public class Robot extends TimedRobot {
         leftMotor2.follow(leftMotor1);
         rightMotor2.follow(rightMotor1);
 
-        leftMotor1.setInverted(true);
-        leftMotor2.setInverted(true);
+        rightMotor1.setInverted(true);
+        rightMotor2.setInverted(true);
+        
 
         m_chooser.setDefaultOption("Tank Drive", tankDrive);
         m_chooser.addOption("Arcade Drive", arcadeDrive);
         SmartDashboard.putData("Drive choices", m_chooser);
         CameraServer.startAutomaticCapture();
 
-        kIntake = new Intake(intakeID, shooterLeftID, shooterRightID, shooterSpeed, intakeSpeed);
-        mArm = new Arm(armMotor1ID, armMotor2ID);
+        //kIntake = new Intake(intakeID, shooterLeftID, shooterRightID, shooterSpeed, intakeSpeed);
+        //mArm = new Arm(armMotor1ID, armMotor2ID);
     }
 
     /**
@@ -168,7 +169,7 @@ public class Robot extends TimedRobot {
         shooterSpeed = SmartDashboard.getNumber("Shooter Speed", 1);
 
         // Intake and shooter controls
-        if (mXboxOperator.getRightBumperPressed()) {
+        /*if (mXboxOperator.getRightBumperPressed()) {
             kIntake.pickupRing(intakeSpeed);
         } else {
             kIntake.stopPickup();
@@ -189,7 +190,7 @@ public class Robot extends TimedRobot {
             mArm.moveToPostion(mArm.downAngle);
         } else {
             mArm.stopArm();
-        }
+        }*/
     }
 
     @Override
