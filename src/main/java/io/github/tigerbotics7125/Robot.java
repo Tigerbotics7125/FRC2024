@@ -77,15 +77,14 @@ public class Robot extends TimedRobot {
 
         rightMotor1.setInverted(true);
         rightMotor2.setInverted(true);
-        
 
         m_chooser.setDefaultOption("Tank Drive", tankDrive);
         m_chooser.addOption("Arcade Drive", arcadeDrive);
         SmartDashboard.putData("Drive choices", m_chooser);
         CameraServer.startAutomaticCapture();
 
-        //kIntake = new Intake(intakeID, shooterLeftID, shooterRightID, shooterSpeed, intakeSpeed);
-        //mArm = new Arm(armMotor1ID, armMotor2ID);
+        // kIntake = new Intake(intakeID, shooterLeftID, shooterRightID, shooterSpeed, intakeSpeed);
+        // mArm = new Arm(armMotor1ID, armMotor2ID);
     }
 
     /**
