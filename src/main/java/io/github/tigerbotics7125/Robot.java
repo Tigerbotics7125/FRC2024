@@ -83,8 +83,8 @@ public class Robot extends TimedRobot {
         SmartDashboard.putData("Drive choices", m_chooser);
         CameraServer.startAutomaticCapture();
 
-        // kIntake = new Intake(intakeID, shooterLeftID, shooterRightID, shooterSpeed, intakeSpeed);
-        // mArm = new Arm(armMotor1ID, armMotor2ID);
+        kIntake = new Intake(intakeID, shooterLeftID, shooterRightID, shooterSpeed, intakeSpeed);
+        mArm = new Arm(armMotor1ID, armMotor2ID);
     }
 
     /**
@@ -145,7 +145,7 @@ public class Robot extends TimedRobot {
     public void teleopPeriodic() {
 
         driveSelect = m_chooser.getSelected();
-        System.out.println("Drive mode: " + driveSelect);
+       // System.out.println("Drive mode: " + driveSelect);
 
         switch (driveSelect) {
             case "Tank Drive":
@@ -164,32 +164,33 @@ public class Robot extends TimedRobot {
         SmartDashboard.putNumber("Left Motor Value", leftMotor1.get());
         SmartDashboard.putNumber("Right Motor Value", rightMotor1.get());
 
-        intakeSpeed = SmartDashboard.getNumber("Intake Speed", .5);
-        shooterSpeed = SmartDashboard.getNumber("Shooter Speed", 1);
+        //intakeSpeed = SmartDashboard.getNumber("Intake Speed", .5);
+        //shooterSpeed = SmartDashboard.getNumber("Shooter Speed", 1);
 
-        // Intake and shooter controls
-        /*if (mXboxOperator.getRightBumperPressed()) {
-            kIntake.pickupRing(intakeSpeed);
+        //Intake and shooter controls
+        if (mXboxOperator.getRightBumper()) {
+            kIntake.pickupRing();
         } else {
             kIntake.stopPickup();
         }
 
-        if (mXboxOperator.getLeftBumperPressed()) {
-            kIntake.shootRing(shooterSpeed);
+        if (mXboxOperator.getLeftBumper()) {
+            kIntake.shootRing();
         } else {
             kIntake.stopShooter();
         }
+        mArm.teleop();
 
         // Arm Controls
         if (mXboxOperator.getYButtonPressed()) {
-            mArm.moveToPostion(mArm.ampAngle);
+            mArm.amp();
         } else if (mXboxOperator.getXButtonPressed()) {
-            mArm.moveToPostion(mArm.shootingAngle);
+            mArm.shoot();
         } else if (mXboxOperator.getBButtonPressed()) {
-            mArm.moveToPostion(mArm.downAngle);
+            mArm.stow();
         } else {
             mArm.stopArm();
-        }*/
+        }
     }
 
     @Override
