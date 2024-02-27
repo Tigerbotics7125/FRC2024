@@ -9,8 +9,6 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
-
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Arm {
@@ -58,7 +56,6 @@ public class Arm {
         SmartDashboard.putNumber("Arm Max Output", kMaxOutput);
         SmartDashboard.putNumber("Arm Min Output", kMinOutput);
         SmartDashboard.putNumber("Arm Set Rotations", 0);
-
     }
 
     public void teleop() {
@@ -103,14 +100,12 @@ public class Arm {
         double rotations = SmartDashboard.getNumber("Arm Set Rotations", 0);
         System.out.println("Rotations: " + rotations);
         /**
-         * PIDController objects are commanded to a set point using the
-         * SetReference() method.
-         * 
-         * The first parameter is the value of the set point, whose units vary
-         * depending on the control type set in the second parameter.
-         * 
-         * The second parameter is the control type can be set to one of four
-         * parameters:
+         * PIDController objects are commanded to a set point using the SetReference() method.
+         *
+         * <p>The first parameter is the value of the set point, whose units vary depending on the
+         * control type set in the second parameter.
+         *
+         * <p>The second parameter is the control type can be set to one of four parameters:
          * com.revrobotics.CANSparkMax.ControlType.kDutyCycle
          * com.revrobotics.CANSparkMax.ControlType.kPosition
          * com.revrobotics.CANSparkMax.ControlType.kVelocity

@@ -145,7 +145,7 @@ public class Robot extends TimedRobot {
     public void teleopPeriodic() {
 
         driveSelect = m_chooser.getSelected();
-       // System.out.println("Drive mode: " + driveSelect);
+        // System.out.println("Drive mode: " + driveSelect);
 
         switch (driveSelect) {
             case "Tank Drive":
@@ -164,10 +164,10 @@ public class Robot extends TimedRobot {
         SmartDashboard.putNumber("Left Motor Value", leftMotor1.get());
         SmartDashboard.putNumber("Right Motor Value", rightMotor1.get());
 
-        //intakeSpeed = SmartDashboard.getNumber("Intake Speed", .5);
-        //shooterSpeed = SmartDashboard.getNumber("Shooter Speed", 1);
+        // intakeSpeed = SmartDashboard.getNumber("Intake Speed", .5);
+        // shooterSpeed = SmartDashboard.getNumber("Shooter Speed", 1);
 
-        //Intake and shooter controls
+        // Intake and shooter controls
         if (mXboxOperator.getRightBumper()) {
             kIntake.pickupRing();
         } else {

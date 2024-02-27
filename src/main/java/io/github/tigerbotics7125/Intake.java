@@ -6,12 +6,10 @@
 package io.github.tigerbotics7125;
 
 import com.revrobotics.CANSparkLowLevel.MotorType;
-
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Intake {
 
@@ -63,7 +61,6 @@ public class Intake {
         m_shooterMotorRight.setInverted(true);
         m_intakeMotor.setInverted(false);
         m_shooterMotorLeft.follow(m_shooterMotorRight);
-
     }
 
     public void pickupRing() {
@@ -84,8 +81,7 @@ public class Intake {
     }
 
     public void stopPickup() {
-        if (!shooting)
-            m_intakeMotor.set(0);
+        if (!shooting) m_intakeMotor.set(0);
     }
 
     public void stopShooter() {
