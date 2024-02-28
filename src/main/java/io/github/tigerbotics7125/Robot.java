@@ -9,6 +9,8 @@ package io.github.tigerbotics7125;
 
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
+
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
@@ -36,6 +38,12 @@ public class Robot extends TimedRobot {
     private CANSparkMax rightMotor1 = new CANSparkMax(2, MotorType.kBrushed);
     private CANSparkMax leftMotor2 = new CANSparkMax(3, MotorType.kBrushed);
     private CANSparkMax rightMotor2 = new CANSparkMax(4, MotorType.kBrushed);
+    RelativeEncoder leftMEncoder = leftMotor1.getEncoder();
+    RelativeEncoder rightMEncoder = rightMotor1.getEncoder();
+
+
+
+    
 
     int intakeID = 5;
     int shooterLeftID = 6;
@@ -47,13 +55,22 @@ public class Robot extends TimedRobot {
     int armMotor1ID = 8;
     int armMotor2ID = 9;
 
+    
+    double autonomousDistance = 50;
+    double turnDistance = 21.991148;
+    double wheelCircumference = 6*Math.PI;
+
     private DifferentialDrive mDrive = new DifferentialDrive(leftMotor1, rightMotor1);
     private XboxController mXboxDrive = new XboxController(0);
     private XboxController mXboxOperator = new XboxController(1);
     String tankDrive = "Tank Drive";
     String arcadeDrive = "Arcade Drive";
     String driveSelect;
-    SendableChooser<String> m_chooser = new SendableChooser<>();
+    SendableChooser<String> m_chooserDrive = new SendableChooser<>();
+    String autonomous1 = "Autonomous 1";
+    String autonomous2 = "Autonomous 2";
+    String autonomousSelect;
+    SendableChooser<String> m_chooserAutonomous = new SendableChooser<>();
 
     /*
      * private CANSparkMax mLeft1 = new CANSparkMax(0, MotorType.kBrushed);
@@ -78,9 +95,13 @@ public class Robot extends TimedRobot {
         rightMotor1.setInverted(true);
         rightMotor2.setInverted(true);
 
-        m_chooser.setDefaultOption("Tank Drive", tankDrive);
-        m_chooser.addOption("Arcade Drive", arcadeDrive);
-        SmartDashboard.putData("Drive choices", m_chooser);
+        m_chooserDrive.setDefaultOption("Tank Drive", tankDrive);
+        m_chooserDrive.addOption("Arcade Drive", arcadeDrive);
+        SmartDashboard.putData("Drive choices", m_chooserDrive);
+
+        m_chooserAutonomous.setDefaultOption("Autonomous 1", autonomous1);
+        m_chooserAutonomous.addOption("Autonomous 2", autonomous2);
+        SmartDashboard.putData("Autonomous", m_chooserAutonomous);
         CameraServer.startAutomaticCapture();
 
         kIntake = new Intake(intakeID, shooterLeftID, shooterRightID, shooterSpeed, intakeSpeed);
@@ -119,14 +140,53 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousInit() {
         // An example command will be run in autonomous
-
+        leftMEncoder.setPosition(0);
+        rightMEncoder.setPosition(0);
+        autonomousSelect = m_chooserAutonomous.getSelected();
         // schedule the autonomous command (example)
 
     }
 
     /** This function is called periodically during autonomous. */
     @Override
-    public void autonomousPeriodic() {}
+    public void autonomousPeriodic() {
+        
+        kIntake.shootRing();
+        
+        
+        
+
+        switch (autonomousSelect) {
+            case "Autonomous 1":
+                if(rightMEncoder.getPosition()<(turnDistance/wheelCircumference)){
+            mDrive.tankDrive(0, .5);
+        }
+            leftMEncoder.setPosition(0);
+            rightMEncoder.setPosition(0);
+
+                if(rightMEncoder.getPosition()<(autonomousDistance/wheelCircumference)&&
+                leftMEncoder.getPosition()<(autonomousDistance/wheelCircumference)){
+            mDrive.tankDrive(.5, .5);
+        }
+                break;
+
+            case "Autonomous 2":
+                if(leftMEncoder.getPosition()<(turnDistance/wheelCircumference)){
+            mDrive.tankDrive(.5, 0);
+        }
+            leftMEncoder.setPosition(0);
+            rightMEncoder.setPosition(0);
+
+                if(rightMEncoder.getPosition()<(autonomousDistance/wheelCircumference)&&
+                leftMEncoder.getPosition()<(autonomousDistance/wheelCircumference)){
+            mDrive.tankDrive(0.5, .5);
+        }
+                break;
+
+            default:
+                break;
+        }
+    }
 
     @Override
     public void teleopInit() {
@@ -134,7 +194,7 @@ public class Robot extends TimedRobot {
         // teleop starts running. If you want the autonomous to
         // continue until interrupted by another command, remove
         // this line or comment it out.
-        driveSelect = m_chooser.getSelected();
+        driveSelect = m_chooserDrive.getSelected();
 
         SmartDashboard.putNumber("Intake Speed", .5);
         SmartDashboard.putNumber("Shooter Speed", 1);
@@ -144,7 +204,7 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopPeriodic() {
 
-        driveSelect = m_chooser.getSelected();
+        driveSelect = m_chooserDrive.getSelected();
         // System.out.println("Drive mode: " + driveSelect);
 
         switch (driveSelect) {
