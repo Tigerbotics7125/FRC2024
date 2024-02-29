@@ -38,8 +38,8 @@ public class Robot extends TimedRobot {
     private CANSparkMax rightMotor1 = new CANSparkMax(2, MotorType.kBrushed);
     private CANSparkMax leftMotor2 = new CANSparkMax(3, MotorType.kBrushed);
     private CANSparkMax rightMotor2 = new CANSparkMax(4, MotorType.kBrushed);
-    RelativeEncoder leftMEncoder = leftMotor1.getEncoder();
-    RelativeEncoder rightMEncoder = rightMotor1.getEncoder();
+    RelativeEncoder leftMEncoder = leftMotor1.getAlternateEncoder(4096);
+    RelativeEncoder rightMEncoder = rightMotor1.getAlternateEncoder(4096);
 
 
 
