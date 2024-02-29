@@ -10,11 +10,11 @@ package io.github.tigerbotics7125;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
+
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj.motorcontrol.*;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -26,6 +26,8 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
  * project.
  */
 public class Robot extends TimedRobot {
+
+
 
     // private RobotContainer m_robotContainer;
 
@@ -116,6 +118,10 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void robotPeriodic() {
+
+        SmartDashboard.putNumber("Encoder Value Right", rightMEncoder.getPosition());
+        SmartDashboard.putNumber("Encoder Value Left", leftMEncoder.getPosition());
+        
         // Runs the Scheduler. This is responsible for polling buttons, adding
         // newly-scheduled
         // commands, running already-scheduled commands, removing finished or
