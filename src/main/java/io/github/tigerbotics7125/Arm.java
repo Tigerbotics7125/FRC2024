@@ -19,6 +19,10 @@ public class Arm {
     private RelativeEncoder m_encoder;
     public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput;
 
+    double speaker = 0;
+    double amp = 30;
+    double down = 68;
+
     public Arm(int armMotor1ID, int armMotor2ID) {
         // initialize motor
         m_motor1 = new CANSparkMax(armMotor1ID, MotorType.kBrushless);
