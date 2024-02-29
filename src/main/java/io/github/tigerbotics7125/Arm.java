@@ -126,4 +126,8 @@ public class Arm {
         SmartDashboard.putNumber("SetPoint", rotations);
         SmartDashboard.putNumber("ProcessVariable", m_encoder.getPosition());
     }
+
+    public void goToPosition(double position){
+        m_pidController.setReference(position, CANSparkMax.ControlType.kPosition);
+    }
 }
