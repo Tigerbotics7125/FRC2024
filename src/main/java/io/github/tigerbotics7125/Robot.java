@@ -229,6 +229,7 @@ public class Robot extends TimedRobot {
             kIntake.pickupRing();
         } else {
             kIntake.stopPickup();
+            kIntake.backUpRing(mXboxOperator.getRightTriggerAxis());
         }
 
         if (mXboxOperator.getLeftBumper()) {
@@ -237,7 +238,6 @@ public class Robot extends TimedRobot {
             kIntake.stopShooter();
         }
 
-        kIntake.backUpRing(mXboxOperator.getRightTriggerAxis());
         // mArm.teleop();
         // mArm.setTo0();
 
