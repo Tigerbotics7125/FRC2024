@@ -103,8 +103,8 @@ public class Robot extends TimedRobot {
 
         leftMEncoder.setPosition(0);
         rightMEncoder.setPosition(0);
-       // leftMEncoder.setInverted(true);
-        //rightMEncoder.setInverted(true);
+        // leftMEncoder.setInverted(true);
+        // rightMEncoder.setInverted(true);
     }
 
     /**
