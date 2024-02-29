@@ -10,7 +10,6 @@ package io.github.tigerbotics7125;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
-
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
@@ -41,10 +40,6 @@ public class Robot extends TimedRobot {
     RelativeEncoder leftMEncoder = leftMotor1.getAlternateEncoder(4096);
     RelativeEncoder rightMEncoder = rightMotor1.getAlternateEncoder(4096);
 
-
-
-    
-
     int intakeID = 5;
     int shooterLeftID = 6;
     int shooterRightID = 7;
@@ -55,10 +50,9 @@ public class Robot extends TimedRobot {
     int armMotor1ID = 8;
     int armMotor2ID = 9;
 
-    
     double autonomousDistance = 50;
     double turnDistance = 21.991148;
-    double wheelCircumference = 6*Math.PI;
+    double wheelCircumference = 6 * Math.PI;
 
     private DifferentialDrive mDrive = new DifferentialDrive(leftMotor1, rightMotor1);
     private XboxController mXboxDrive = new XboxController(0);
@@ -150,37 +144,34 @@ public class Robot extends TimedRobot {
     /** This function is called periodically during autonomous. */
     @Override
     public void autonomousPeriodic() {
-        
+
         kIntake.shootRing();
-        
-        
-        
 
         switch (autonomousSelect) {
             case "Autonomous 1":
-                if(rightMEncoder.getPosition()<(turnDistance/wheelCircumference)){
-            mDrive.tankDrive(0, .5);
-        }
-            leftMEncoder.setPosition(0);
-            rightMEncoder.setPosition(0);
+                if (rightMEncoder.getPosition() < (turnDistance / wheelCircumference)) {
+                    mDrive.tankDrive(0, .5);
+                }
+                leftMEncoder.setPosition(0);
+                rightMEncoder.setPosition(0);
 
-                if(rightMEncoder.getPosition()<(autonomousDistance/wheelCircumference)&&
-                leftMEncoder.getPosition()<(autonomousDistance/wheelCircumference)){
-            mDrive.tankDrive(.5, .5);
-        }
+                if (rightMEncoder.getPosition() < (autonomousDistance / wheelCircumference)
+                        && leftMEncoder.getPosition() < (autonomousDistance / wheelCircumference)) {
+                    mDrive.tankDrive(.5, .5);
+                }
                 break;
 
             case "Autonomous 2":
-                if(leftMEncoder.getPosition()<(turnDistance/wheelCircumference)){
-            mDrive.tankDrive(.5, 0);
-        }
-            leftMEncoder.setPosition(0);
-            rightMEncoder.setPosition(0);
+                if (leftMEncoder.getPosition() < (turnDistance / wheelCircumference)) {
+                    mDrive.tankDrive(.5, 0);
+                }
+                leftMEncoder.setPosition(0);
+                rightMEncoder.setPosition(0);
 
-                if(rightMEncoder.getPosition()<(autonomousDistance/wheelCircumference)&&
-                leftMEncoder.getPosition()<(autonomousDistance/wheelCircumference)){
-            mDrive.tankDrive(0.5, .5);
-        }
+                if (rightMEncoder.getPosition() < (autonomousDistance / wheelCircumference)
+                        && leftMEncoder.getPosition() < (autonomousDistance / wheelCircumference)) {
+                    mDrive.tankDrive(0.5, .5);
+                }
                 break;
 
             default:
