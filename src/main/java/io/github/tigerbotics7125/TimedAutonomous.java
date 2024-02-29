@@ -21,7 +21,7 @@ public class TimedAutonomous {
     double deltaTime;
     SendableChooser<String> m_chooserAutonomous = new SendableChooser<>();
 
-    public TimedAutonomous(RelativeEncoder leftMEncoder, RelativeEncoder rightMEncoder) {
+    public TimedAutonomous() {
 
         startTime = Timer.getFPGATimestamp();
 
