@@ -103,8 +103,8 @@ public class Robot extends TimedRobot {
 
         leftMEncoder.setPosition(0);
         rightMEncoder.setPosition(0);
-        leftMEncoder.setInverted(true);
-        rightMEncoder.setInverted(true);
+       // leftMEncoder.setInverted(true);
+        //rightMEncoder.setInverted(true);
     }
 
     /**
@@ -154,26 +154,26 @@ public class Robot extends TimedRobot {
 
         switch (autonomousSelect) {
             case "Autonomous 1":
-                if (rightMEncoder.getPosition() < (turnDistance / wheelCircumference)) {
+                while (rightMEncoder.getPosition() < (turnDistance / wheelCircumference)) {
                     mDrive.tankDrive(0, .5);
                 }
                 leftMEncoder.setPosition(0);
                 rightMEncoder.setPosition(0);
 
-                if (rightMEncoder.getPosition() < (autonomousDistance / wheelCircumference)
+                while (rightMEncoder.getPosition() < (autonomousDistance / wheelCircumference)
                         && leftMEncoder.getPosition() < (autonomousDistance / wheelCircumference)) {
                     mDrive.tankDrive(.5, .5);
                 }
                 break;
 
             case "Autonomous 2":
-                if (leftMEncoder.getPosition() < (turnDistance / wheelCircumference)) {
+                while (leftMEncoder.getPosition() < (turnDistance / wheelCircumference)) {
                     mDrive.tankDrive(.5, 0);
                 }
                 leftMEncoder.setPosition(0);
                 rightMEncoder.setPosition(0);
 
-                if (rightMEncoder.getPosition() < (autonomousDistance / wheelCircumference)
+                while (rightMEncoder.getPosition() < (autonomousDistance / wheelCircumference)
                         && leftMEncoder.getPosition() < (autonomousDistance / wheelCircumference)) {
                     mDrive.tankDrive(0.5, .5);
                 }
