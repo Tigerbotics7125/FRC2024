@@ -25,21 +25,17 @@ public class Arm {
         m_motor2 = new CANSparkMax(armMotor2ID, MotorType.kBrushless);
 
         /**
-         * The restoreFactoryDefaults method can be used to reset the configuration
-         * parameters
-         * in the SPARK MAX to their factory default state. If no argument is passed,
-         * these
-         * parameters will not persist between power cycles
+         * The restoreFactoryDefaults method can be used to reset the configuration parameters in
+         * the SPARK MAX to their factory default state. If no argument is passed, these parameters
+         * will not persist between power cycles
          */
         m_motor1.restoreFactoryDefaults();
         m_motor2.restoreFactoryDefaults();
-        m_motor2.follow(m_motor1,true);
+        m_motor2.follow(m_motor1, true);
 
         /**
-         * In order to use PID functionality for a controller, a SparkPIDController
-         * object
-         * is constructed by calling the getPIDController() method on an existing
-         * CANSparkMax object
+         * In order to use PID functionality for a controller, a SparkPIDController object is
+         * constructed by calling the getPIDController() method on an existing CANSparkMax object
          */
         m_pidController = m_motor1.getPIDController();
 
@@ -114,14 +110,12 @@ public class Arm {
         }
 
         /**
-         * PIDController objects are commanded to a set point using the
-         * SetReference() method.
-         * 
-         * The first parameter is the value of the set point, whose units vary
-         * depending on the control type set in the second parameter.
-         * 
-         * The second parameter is the control type can be set to one of four
-         * parameters:
+         * PIDController objects are commanded to a set point using the SetReference() method.
+         *
+         * <p>The first parameter is the value of the set point, whose units vary depending on the
+         * control type set in the second parameter.
+         *
+         * <p>The second parameter is the control type can be set to one of four parameters:
          * com.revrobotics.CANSparkMax.ControlType.kDutyCycle
          * com.revrobotics.CANSparkMax.ControlType.kPosition
          * com.revrobotics.CANSparkMax.ControlType.kVelocity
