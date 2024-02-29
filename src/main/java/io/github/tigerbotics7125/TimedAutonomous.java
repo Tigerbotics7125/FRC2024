@@ -5,7 +5,6 @@
  */
 package io.github.tigerbotics7125;
 
-import com.revrobotics.RelativeEncoder;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
