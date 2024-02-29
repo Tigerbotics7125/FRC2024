@@ -10,6 +10,7 @@ package io.github.tigerbotics7125;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
+
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
@@ -40,6 +41,10 @@ public class Robot extends TimedRobot {
     RelativeEncoder leftMEncoder = leftMotor1.getEncoder();
     RelativeEncoder rightMEncoder = rightMotor1.getEncoder();
 
+
+
+    
+
     int intakeID = 5;
     int shooterLeftID = 6;
     int shooterRightID = 7;
@@ -50,9 +55,10 @@ public class Robot extends TimedRobot {
     int armMotor1ID = 8;
     int armMotor2ID = 9;
 
+    
     double autonomousDistance = 50;
     double turnDistance = 21.991148;
-    double wheelCircumference = 6 * Math.PI;
+    double wheelCircumference = 6*Math.PI;
 
     private DifferentialDrive mDrive = new DifferentialDrive(leftMotor1, rightMotor1);
     private XboxController mXboxDrive = new XboxController(0);
@@ -82,6 +88,7 @@ public class Robot extends TimedRobot {
     @Override
     public void robotInit() {
         // Configure the trigger bindings
+
         leftMotor2.follow(leftMotor1);
         rightMotor2.follow(rightMotor1);
 
@@ -142,7 +149,44 @@ public class Robot extends TimedRobot {
 
     /** This function is called periodically during autonomous. */
     @Override
-    public void autonomousPeriodic() {}
+    public void autonomousPeriodic() {
+        
+        kIntake.shootRing();
+        
+        
+        
+
+        switch (autonomousSelect) {
+            case "Autonomous 1":
+                if(rightMEncoder.getPosition()<(turnDistance/wheelCircumference)){
+            mDrive.tankDrive(0, .5);
+        }
+            leftMEncoder.setPosition(0);
+            rightMEncoder.setPosition(0);
+
+                if(rightMEncoder.getPosition()<(autonomousDistance/wheelCircumference)&&
+                leftMEncoder.getPosition()<(autonomousDistance/wheelCircumference)){
+            mDrive.tankDrive(.5, .5);
+        }
+                break;
+
+            case "Autonomous 2":
+                if(leftMEncoder.getPosition()<(turnDistance/wheelCircumference)){
+            mDrive.tankDrive(.5, 0);
+        }
+            leftMEncoder.setPosition(0);
+            rightMEncoder.setPosition(0);
+
+                if(rightMEncoder.getPosition()<(autonomousDistance/wheelCircumference)&&
+                leftMEncoder.getPosition()<(autonomousDistance/wheelCircumference)){
+            mDrive.tankDrive(0.5, .5);
+        }
+                break;
+
+            default:
+                break;
+        }
+    }
 
     @Override
     public void teleopInit() {
@@ -152,8 +196,8 @@ public class Robot extends TimedRobot {
         // this line or comment it out.
         driveSelect = m_chooserDrive.getSelected();
 
-        // SmartDashboard.putNumber("Intake Speed", .5);
-        // SmartDashboard.putNumber("Shooter Speed", 1);
+        SmartDashboard.putNumber("Intake Speed", .5);
+        SmartDashboard.putNumber("Shooter Speed", 1);
     }
 
     /** This function is called periodically during operator control. */
@@ -177,8 +221,8 @@ public class Robot extends TimedRobot {
                 break;
         }
 
-        // SmartDashboard.putNumber("Left Motor Value", leftMotor1.get());
-        // SmartDashboard.putNumber("Right Motor Value", rightMotor1.get());
+        SmartDashboard.putNumber("Left Motor Value", leftMotor1.get());
+        SmartDashboard.putNumber("Right Motor Value", rightMotor1.get());
 
         // intakeSpeed = SmartDashboard.getNumber("Intake Speed", .5);
         // shooterSpeed = SmartDashboard.getNumber("Shooter Speed", 1);
@@ -197,18 +241,16 @@ public class Robot extends TimedRobot {
         }
         mArm.teleop();
 
-        /*
-         * // Arm Controls
-         * if (mXboxOperator.getYButtonPressed()) {
-         * mArm.amp();
-         * } else if (mXboxOperator.getXButtonPressed()) {
-         * mArm.shoot();
-         * } else if (mXboxOperator.getBButtonPressed()) {
-         * mArm.stow();
-         * } else {
-         * mArm.stopArm();
-         * }
-         */
+        // Arm Controls
+        /*if (mXboxOperator.getYButtonPressed()) {
+            mArm.amp();
+        } else if (mXboxOperator.getXButtonPressed()) {
+            mArm.shoot();
+        } else if (mXboxOperator.getBButtonPressed()) {
+            mArm.stow();
+        } else {
+            mArm.stopArm();
+        }*/
     }
 
     @Override
