@@ -246,11 +246,11 @@ public class Robot extends TimedRobot {
 
         // Arm Controls
         /*if (mXboxOperator.getYButtonPressed()) {
-            mArm.amp();
+            mArm.goToPosition(mArm.amp)
         } else if (mXboxOperator.getXButtonPressed()) {
-            mArm.shoot();
+            mArm.goToPosition(mArm.speaker)
         } else if (mXboxOperator.getBButtonPressed()) {
-            mArm.stow();
+            mArm.goToPosition(mArm.down);
         } else {
             mArm.stopArm();
         }*/
