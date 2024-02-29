@@ -48,8 +48,8 @@ public class Arm {
         kD = .5;
         kIz = 0;
         kFF = 0;
-        kMaxOutput = 1;
-        kMinOutput = -1;
+        kMaxOutput = 0.5;
+        kMinOutput = -0.5;
 
         // set PID coefficients
         m_pidController.setP(kP);
@@ -68,6 +68,9 @@ public class Arm {
         SmartDashboard.putNumber("Max Output", kMaxOutput);
         SmartDashboard.putNumber("Min Output", kMinOutput);
         SmartDashboard.putNumber("Set Rotations", 0);
+
+
+        SmartDashboard.putBoolean("Set Position to 0", false);
     }
 
     public void teleop() {
@@ -125,9 +128,25 @@ public class Arm {
 
         SmartDashboard.putNumber("SetPoint", rotations);
         SmartDashboard.putNumber("ProcessVariable", m_encoder.getPosition());
-    }
+
+        
+        }
+
+
+    
 
     public void goToPosition(double position) {
         m_pidController.setReference(position, CANSparkMax.ControlType.kPosition);
     }
+
+    public void setTo0(){
+        boolean set0 = SmartDashboard.getBoolean("Set Position to 0", false);
+        if(set0){
+            m_encoder.setPosition(0);
+            SmartDashboard.putBoolean("Set Position to 0", false);
+    }
 }
+
+}
+
+    

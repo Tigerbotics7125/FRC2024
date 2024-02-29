@@ -100,6 +100,11 @@ public class Robot extends TimedRobot {
 
         kIntake = new Intake(intakeID, shooterLeftID, shooterRightID, shooterSpeed, intakeSpeed);
         mArm = new Arm(armMotor1ID, armMotor2ID);
+
+        leftMEncoder.setPosition(0);
+        rightMEncoder.setPosition(0);
+        leftMEncoder.setInverted(true);
+        rightMEncoder.setInverted(true);
     }
 
     /**
@@ -145,7 +150,7 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousPeriodic() {
 
-        kIntake.shootRing();
+        //kIntake.shootRing();
 
         switch (autonomousSelect) {
             case "Autonomous 1":
@@ -177,6 +182,7 @@ public class Robot extends TimedRobot {
             default:
                 break;
         }
+        
     }
 
     @Override
@@ -197,6 +203,7 @@ public class Robot extends TimedRobot {
 
         driveSelect = m_chooserDrive.getSelected();
         // System.out.println("Drive mode: " + driveSelect);
+        SmartDashboard.putNumber("Rotations Right Wheel", rightMEncoder.getPosition());
 
         switch (driveSelect) {
             case "Tank Drive":
@@ -219,7 +226,7 @@ public class Robot extends TimedRobot {
         // shooterSpeed = SmartDashboard.getNumber("Shooter Speed", 1);
 
         // Intake and shooter controls
-        if (mXboxOperator.getRightBumper()) {
+         if (mXboxOperator.getRightBumper()) {
             kIntake.pickupRing();
         } else {
             kIntake.stopPickup();
@@ -230,7 +237,10 @@ public class Robot extends TimedRobot {
         } else {
             kIntake.stopShooter();
         }
-        mArm.teleop();
+
+        kIntake.backUpRing(mXboxOperator.getRightTriggerAxis());
+        //mArm.teleop();
+        //mArm.setTo0();
 
         // Arm Controls
         /*if (mXboxOperator.getYButtonPressed()) {
@@ -242,7 +252,9 @@ public class Robot extends TimedRobot {
         } else {
             mArm.stopArm();
         }*/
+        
     }
+
 
     @Override
     public void testInit() {

@@ -90,4 +90,8 @@ public class Intake {
         SmartDashboard.putNumber("SetRef", 0);
         SmartDashboard.putNumber("ProcessVariable", m_shooterEncoder.getVelocity());
     }
+
+    public void backUpRing(double axisValue){
+        m_intakeMotor.set(axisValue*-.25);
+    }
 }
