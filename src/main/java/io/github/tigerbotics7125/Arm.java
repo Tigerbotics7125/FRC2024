@@ -69,7 +69,6 @@ public class Arm {
         SmartDashboard.putNumber("Min Output", kMinOutput);
         SmartDashboard.putNumber("Set Rotations", 0);
 
-
         SmartDashboard.putBoolean("Set Position to 0", false);
     }
 
@@ -128,25 +127,17 @@ public class Arm {
 
         SmartDashboard.putNumber("SetPoint", rotations);
         SmartDashboard.putNumber("ProcessVariable", m_encoder.getPosition());
-
-        
-        }
-
-
-    
+    }
 
     public void goToPosition(double position) {
         m_pidController.setReference(position, CANSparkMax.ControlType.kPosition);
     }
 
-    public void setTo0(){
+    public void setTo0() {
         boolean set0 = SmartDashboard.getBoolean("Set Position to 0", false);
-        if(set0){
+        if (set0) {
             m_encoder.setPosition(0);
             SmartDashboard.putBoolean("Set Position to 0", false);
+        }
     }
 }
-
-}
-
-    

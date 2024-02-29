@@ -150,7 +150,7 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousPeriodic() {
 
-        //kIntake.shootRing();
+        // kIntake.shootRing();
 
         switch (autonomousSelect) {
             case "Autonomous 1":
@@ -182,7 +182,6 @@ public class Robot extends TimedRobot {
             default:
                 break;
         }
-        
     }
 
     @Override
@@ -226,7 +225,7 @@ public class Robot extends TimedRobot {
         // shooterSpeed = SmartDashboard.getNumber("Shooter Speed", 1);
 
         // Intake and shooter controls
-         if (mXboxOperator.getRightBumper()) {
+        if (mXboxOperator.getRightBumper()) {
             kIntake.pickupRing();
         } else {
             kIntake.stopPickup();
@@ -239,8 +238,8 @@ public class Robot extends TimedRobot {
         }
 
         kIntake.backUpRing(mXboxOperator.getRightTriggerAxis());
-        //mArm.teleop();
-        //mArm.setTo0();
+        // mArm.teleop();
+        // mArm.setTo0();
 
         // Arm Controls
         /*if (mXboxOperator.getYButtonPressed()) {
@@ -252,9 +251,8 @@ public class Robot extends TimedRobot {
         } else {
             mArm.stopArm();
         }*/
-        
-    }
 
+    }
 
     @Override
     public void testInit() {
