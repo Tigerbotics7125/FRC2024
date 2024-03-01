@@ -107,9 +107,8 @@ public class Robot extends TimedRobot {
         // leftMEncoder.setInverted(true);
         // rightMEncoder.setInverted(true);
 
-        //mArm.goToPosition(mArm.speaker);
+        // mArm.goToPosition(mArm.speaker);
 
-        
     }
 
     /**
@@ -153,7 +152,6 @@ public class Robot extends TimedRobot {
         autonomousSelect = m_chooserAutonomous.getSelected();
         // schedule the autonomous command (example)
         mTimedAutonomous = new TimedAutonomous();
-
     }
 
     /** This function is called periodically during autonomous. */
@@ -161,11 +159,10 @@ public class Robot extends TimedRobot {
     public void autonomousPeriodic() {
 
         // kIntake.shootRing();
-        
-             mTimedAutonomous.autoChooser(mDrive, kIntake);
 
+        mTimedAutonomous.autoChooser(mDrive, kIntake);
 
-       /*  switch (autonomousSelect) {
+        /*  switch (autonomousSelect) {
             case "Autonomous 1":
                 while (rightMEncoder.getPosition() < (turnDistance / wheelCircumference)) {
                     mDrive.tankDrive(0, .5);
@@ -252,29 +249,25 @@ public class Robot extends TimedRobot {
         } else {
             kIntake.stopShooter();
         }
-        
+
         // Arm Controls
         boolean armControl = SmartDashboard.getBoolean("Arm Manual Control", false);
-        
-        if(armControl){
+
+        if (armControl) {
             // mArm.teleop();
-        }
-        else{
-            /*if (mXboxOperator.getYButtonPressed()) {
-            mArm.goToPosition(mArm.amp)
-        } else if (mXboxOperator.getXButtonPressed()) {
-            mArm.goToPosition(mArm.speaker)
-        } else if (mXboxOperator.getBButtonPressed()) {
-            mArm.goToPosition(mArm.down);
         } else {
-            mArm.stopArm();
-        }*/
+            /*if (mXboxOperator.getYButtonPressed()) {
+                mArm.goToPosition(mArm.amp)
+            } else if (mXboxOperator.getXButtonPressed()) {
+                mArm.goToPosition(mArm.speaker)
+            } else if (mXboxOperator.getBButtonPressed()) {
+                mArm.goToPosition(mArm.down);
+            } else {
+                mArm.stopArm();
+            }*/
         }
 
-        
         // mArm.setTo0();
-
-        
 
     }
 

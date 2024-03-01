@@ -36,8 +36,7 @@ public class TimedAutonomous {
 
         switch (autonomousSelect) {
             case "Autonomous 1":
-                
-            runAutoLeft(mDrive, kIntake);
+                runAutoLeft(mDrive, kIntake);
                 break;
 
             case "Autonomous 2":
@@ -51,10 +50,9 @@ public class TimedAutonomous {
 
     public void runAutoLeft(DifferentialDrive mDrive, Intake kIntake) {
         deltaTime = Timer.getFPGATimestamp() - startTime;
-        if(deltaTime < howLong){
+        if (deltaTime < howLong) {
             kIntake.shootRing();
-        }
-        else if (deltaTime < howLong2) {
+        } else if (deltaTime < howLong2) {
             kIntake.stopShooter();
             kIntake.stopPickup();
             mDrive.tankDrive(0.5, 0);
@@ -67,10 +65,9 @@ public class TimedAutonomous {
 
     public void runAutoRight(DifferentialDrive mDrive, Intake kIntake) {
         deltaTime = Timer.getFPGATimestamp() - startTime;
-        if(deltaTime < howLong){
+        if (deltaTime < howLong) {
             kIntake.shootRing();
-        }
-        else if (deltaTime < howLong2) {
+        } else if (deltaTime < howLong2) {
             mDrive.tankDrive(0, 0.5);
         } else if (deltaTime < howLong3) {
             mDrive.tankDrive(0.5, 0.5);
