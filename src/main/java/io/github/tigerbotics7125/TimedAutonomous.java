@@ -18,7 +18,7 @@ public class TimedAutonomous {
     double distance = 21.991148;
     double velocity;
     double howLong = 4;
-    double howLong2 = howLong + (distance/velocity);
+    double howLong2 = howLong + (distance / velocity);
     double howLong3 = 14;
     double deltaTime;
     SendableChooser<String> m_chooserAutonomous = new SendableChooser<>();
