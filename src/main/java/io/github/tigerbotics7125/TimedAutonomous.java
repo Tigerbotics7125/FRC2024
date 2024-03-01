@@ -15,8 +15,9 @@ public class TimedAutonomous {
     String autonomous2 = "Autonomous 2";
     String autonomousSelect;
     double startTime = Timer.getFPGATimestamp();
-    double howLong = 5;
+    double howLong = 4;
     double howLong2 = 10;
+    double howLong3 = 14;
     double deltaTime;
     SendableChooser<String> m_chooserAutonomous = new SendableChooser<>();
 
@@ -29,17 +30,18 @@ public class TimedAutonomous {
         SmartDashboard.putData("Autonomous", m_chooserAutonomous);
     }
 
-    public void autoChooser(DifferentialDrive mDrive) {
-
+    public void autoChooser(DifferentialDrive mDrive, Intake kIntake) {
+        kIntake.shootRing();
         autonomousSelect = m_chooserAutonomous.getSelected();
 
         switch (autonomousSelect) {
             case "Autonomous 1":
-                runAutoLeft(mDrive);
+                
+            runAutoLeft(mDrive, kIntake);
                 break;
 
             case "Autonomous 2":
-                runAutoRight(mDrive);
+                runAutoRight(mDrive, kIntake);
                 break;
 
             default:
@@ -47,22 +49,30 @@ public class TimedAutonomous {
         }
     }
 
-    public void runAutoLeft(DifferentialDrive mDrive) {
+    public void runAutoLeft(DifferentialDrive mDrive, Intake kIntake) {
         deltaTime = Timer.getFPGATimestamp() - startTime;
-        if (deltaTime < howLong) {
+        if(deltaTime < howLong){
+            kIntake.shootRing();
+        }
+        else if (deltaTime < howLong2) {
+            kIntake.stopShooter();
+            kIntake.stopPickup();
             mDrive.tankDrive(0.5, 0);
-        } else if (deltaTime < howLong2) {
+        } else if (deltaTime < howLong3) {
             mDrive.tankDrive(0.5, 0.5);
         } else {
             mDrive.tankDrive(0, 0);
         }
     }
 
-    public void runAutoRight(DifferentialDrive mDrive) {
+    public void runAutoRight(DifferentialDrive mDrive, Intake kIntake) {
         deltaTime = Timer.getFPGATimestamp() - startTime;
-        if (deltaTime < howLong) {
+        if(deltaTime < howLong){
+            kIntake.shootRing();
+        }
+        else if (deltaTime < howLong2) {
             mDrive.tankDrive(0, 0.5);
-        } else if (deltaTime < howLong2) {
+        } else if (deltaTime < howLong3) {
             mDrive.tankDrive(0.5, 0.5);
         } else {
             mDrive.tankDrive(0, 0);
