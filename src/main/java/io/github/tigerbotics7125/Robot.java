@@ -53,6 +53,8 @@ public class Robot extends TimedRobot {
     double turnDistance = 21.991148;
     double wheelCircumference = 6 * Math.PI;
 
+    TimedAutonomous mTimedAutonomous;
+
     private DifferentialDrive mDrive = new DifferentialDrive(leftMotor1, rightMotor1);
     private XboxController mXboxDrive = new XboxController(0);
     private XboxController mXboxOperator = new XboxController(1);
@@ -104,6 +106,10 @@ public class Robot extends TimedRobot {
         rightMEncoder.setPosition(0);
         // leftMEncoder.setInverted(true);
         // rightMEncoder.setInverted(true);
+
+        //mArm.goToPosition(mArm.speaker);
+
+        
     }
 
     /**
@@ -146,6 +152,7 @@ public class Robot extends TimedRobot {
         rightMEncoder.setPosition(0);
         autonomousSelect = m_chooserAutonomous.getSelected();
         // schedule the autonomous command (example)
+        mTimedAutonomous = new TimedAutonomous();
 
     }
 
@@ -154,8 +161,11 @@ public class Robot extends TimedRobot {
     public void autonomousPeriodic() {
 
         // kIntake.shootRing();
+        
+             mTimedAutonomous.autoChooser(mDrive, kIntake);
 
-        switch (autonomousSelect) {
+
+       /*  switch (autonomousSelect) {
             case "Autonomous 1":
                 while (rightMEncoder.getPosition() < (turnDistance / wheelCircumference)) {
                     mDrive.tankDrive(0, .5);
@@ -184,7 +194,7 @@ public class Robot extends TimedRobot {
 
             default:
                 break;
-        }
+        }*/
     }
 
     @Override
@@ -197,6 +207,8 @@ public class Robot extends TimedRobot {
 
         SmartDashboard.putNumber("Intake Speed", .5);
         SmartDashboard.putNumber("Shooter Speed", 1);
+
+        SmartDashboard.putBoolean("Arm Manual Control", false);
     }
 
     /** This function is called periodically during operator control. */
@@ -240,12 +252,15 @@ public class Robot extends TimedRobot {
         } else {
             kIntake.stopShooter();
         }
-
-        // mArm.teleop();
-        // mArm.setTo0();
-
+        
         // Arm Controls
-        /*if (mXboxOperator.getYButtonPressed()) {
+        boolean armControl = SmartDashboard.getBoolean("Arm Manual Control", false);
+        
+        if(armControl){
+            // mArm.teleop();
+        }
+        else{
+            /*if (mXboxOperator.getYButtonPressed()) {
             mArm.goToPosition(mArm.amp)
         } else if (mXboxOperator.getXButtonPressed()) {
             mArm.goToPosition(mArm.speaker)
@@ -254,6 +269,12 @@ public class Robot extends TimedRobot {
         } else {
             mArm.stopArm();
         }*/
+        }
+
+        
+        // mArm.setTo0();
+
+        
 
     }
 
