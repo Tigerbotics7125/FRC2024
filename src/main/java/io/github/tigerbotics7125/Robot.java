@@ -15,9 +15,11 @@ import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -69,6 +71,8 @@ public class Robot extends TimedRobot {
     SendableChooser<String> m_chooserAutonomous = new SendableChooser<>();
 
     WPI_TalonSRX encoderSRX = new WPI_TalonSRX(1);
+    
+    
 
     /*
      * private CANSparkMax mLeft1 = new CANSparkMax(0, MotorType.kBrushed);
@@ -161,9 +165,13 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousPeriodic() {
 
-        // kIntake.shootRing();
+        
 
-        mTimedAutonomous.autoChooser(mDrive, kIntake);
+        //mTimedAutonomous.autoChooser(mDrive, kIntake);
+
+        mDrive.tankDrive(0.5, 0);
+        double velocity = encoderSRX.getSelectedSensorVelocity(1);
+        SmartDashboard.putNumber("Left Velocity", velocity);
 
         /*  switch (autonomousSelect) {
             case "Autonomous 1":
