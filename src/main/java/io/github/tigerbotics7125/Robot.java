@@ -8,6 +8,7 @@ package io.github.tigerbotics7125;
 // import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import edu.wpi.first.cameraserver.CameraServer;
@@ -66,6 +67,10 @@ public class Robot extends TimedRobot {
     String autonomous2 = "Autonomous 2";
     String autonomousSelect;
     SendableChooser<String> m_chooserAutonomous = new SendableChooser<>();
+
+    WPI_TalonSRX encoderSRX = new WPI_TalonSRX(1);
+    
+    
 
     /*
      * private CANSparkMax mLeft1 = new CANSparkMax(0, MotorType.kBrushed);
