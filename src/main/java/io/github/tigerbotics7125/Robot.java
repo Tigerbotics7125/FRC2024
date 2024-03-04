@@ -7,7 +7,6 @@ package io.github.tigerbotics7125;
 
 // import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
@@ -69,9 +68,7 @@ public class Robot extends TimedRobot {
     String autonomousSelect;
     SendableChooser<String> m_chooserAutonomous = new SendableChooser<>();
 
-    //WPI_TalonSRX encoderSRX = new WPI_TalonSRX(1);
-    
-    
+    // WPI_TalonSRX encoderSRX = new WPI_TalonSRX(1);
 
     /*
      * private CANSparkMax mLeft1 = new CANSparkMax(0, MotorType.kBrushed);
@@ -114,8 +111,6 @@ public class Robot extends TimedRobot {
         // leftMEncoder.setInverted(true);
         // rightMEncoder.setInverted(true);
 
-         
-
     }
 
     /**
@@ -132,8 +127,8 @@ public class Robot extends TimedRobot {
         SmartDashboard.putNumber("Encoder Value Left", leftMEncoder.getPosition());
         autonomousSelect = m_chooserAutonomous.getSelected();
 
-        //double velocity = encoderSRX.getSelectedSensorVelocity(1);
-        //SmartDashboard.putNumber("Left Velocity", velocity);
+        // double velocity = encoderSRX.getSelectedSensorVelocity(1);
+        // SmartDashboard.putNumber("Left Velocity", velocity);
 
         // Runs the Scheduler. This is responsible for polling buttons, adding
         // newly-scheduled
@@ -158,8 +153,7 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousInit() {
         // An example command will be run in autonomous
-        
-       
+
         // schedule the autonomous command (example)
         mTimedAutonomous = new TimedAutonomous();
     }
@@ -169,7 +163,7 @@ public class Robot extends TimedRobot {
     public void autonomousPeriodic() {
 
         // kIntake.shootRing();
-        
+
         mTimedAutonomous.autoChooser(mDrive, mArm, autonomousSelect, kIntake);
 
         /*  switch (autonomousSelect) {
@@ -256,17 +250,15 @@ public class Robot extends TimedRobot {
 
         if (mXboxOperator.getLeftBumper()) {
             kIntake.shootRing(.25);
-        } 
-        else{
+        } else {
             kIntake.stopShooter();
-            
         }
 
         // Arm Controls
         boolean armControl = SmartDashboard.getBoolean("Arm Manual Control", false);
 
         if (armControl) {
-             mArm.teleop();
+            mArm.teleop();
         } else {
             if (mXboxOperator.getYButtonPressed()) {
                 mArm.goToPosition(mArm.speaker);
@@ -274,11 +266,10 @@ public class Robot extends TimedRobot {
                 mArm.goToPosition(mArm.amp);
             } else if (mXboxOperator.getBButtonPressed()) {
                 mArm.goToPosition(mArm.down);
-            } 
+            }
         }
 
-         mArm.setTo0();
-
+        mArm.setTo0();
     }
 
     @Override

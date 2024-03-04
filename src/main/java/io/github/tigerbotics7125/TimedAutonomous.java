@@ -5,8 +5,6 @@
  */
 package io.github.tigerbotics7125;
 
-import org.opencv.features2d.KAZE;
-
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -16,9 +14,9 @@ public class TimedAutonomous {
     String autonomous1 = "Autonomous Left";
     String autonomous2 = "Autonomous Right";
     String shootOnlyAuto = "Shoot Only";
-    
+
     double startTime = Timer.getFPGATimestamp();
-    
+
     double howLong = 5;
     double howLong2 = 6;
     double howLong3 = 5.5;
@@ -36,9 +34,10 @@ public class TimedAutonomous {
         SmartDashboard.putData("Autonomous", m_chooserAutonomous);
     }
 
-    public void autoChooser(DifferentialDrive mDrive, Arm mArm, String autonomousSelect, Intake kIntake) {
-        //kIntake.shootRing(.5);
-        
+    public void autoChooser(
+            DifferentialDrive mDrive, Arm mArm, String autonomousSelect, Intake kIntake) {
+        // kIntake.shootRing(.5);
+
         System.out.println(autonomousSelect);
         switch (autonomousSelect) {
             case "Autonomous Left":
@@ -50,10 +49,10 @@ public class TimedAutonomous {
                 break;
 
             case "Shoot Only":
-            shootOnlyAuto(mArm, kIntake);
+                shootOnlyAuto(mArm, kIntake);
             default:
-            shootOnlyAuto( mArm, kIntake);
-            
+                shootOnlyAuto(mArm, kIntake);
+
                 break;
         }
     }
@@ -61,67 +60,66 @@ public class TimedAutonomous {
     public void runAutoLeft(DifferentialDrive mDrive, Arm mArm, Intake kIntake) {
         System.out.println("Autonomous Left");
         deltaTime = Timer.getFPGATimestamp() - startTime;
-        
+
         if (deltaTime < howLong) {
-            mArm.goToPosition(mArm.speakerAuto);     
+            mArm.goToPosition(mArm.speakerAuto);
             kIntake.shootRing(.5);
         } else if (deltaTime < howLong2) {
-             kIntake.stopPickup();
+            kIntake.stopPickup();
             kIntake.stopShooter();
-            mDrive.tankDrive(-0.5, -0.5);} 
-        else if (deltaTime < howLong3) {
+            mDrive.tankDrive(-0.5, -0.5);
+        } else if (deltaTime < howLong3) {
             kIntake.stopShooter();
             kIntake.stopPickup();
         }
-            mDrive.tankDrive(-0.75, 0);
-         if (deltaTime < howLong4) {
-             //kIntake.stopPickup();
-            //kIntake.stopShooter();
-            //mArm.goToPosition(mArm.down);
+        mDrive.tankDrive(-0.75, 0);
+        if (deltaTime < howLong4) {
+            // kIntake.stopPickup();
+            // kIntake.stopShooter();
+            // mArm.goToPosition(mArm.down);
             mDrive.tankDrive(-0.5, -0.5);
         } else {
-             //kIntake.stopPickup();
-            //kIntake.stopShooter();
+            // kIntake.stopPickup();
+            // kIntake.stopShooter();
             mDrive.tankDrive(0, 0);
         }
-    
-
     }
 
     public void runAutoRight(DifferentialDrive mDrive, Arm mArm, Intake kIntake) {
         System.out.println("Autonomous Right");
         deltaTime = Timer.getFPGATimestamp() - startTime;
-         if (deltaTime < howLong) {
-            mArm.goToPosition(mArm.speakerAuto);     
+        if (deltaTime < howLong) {
+            mArm.goToPosition(mArm.speakerAuto);
             kIntake.shootRing(.5);
-        }  else if (deltaTime < howLong2) {
-             kIntake.stopPickup();
+        } else if (deltaTime < howLong2) {
+            kIntake.stopPickup();
             kIntake.stopShooter();
-            mDrive.tankDrive(-0.5, -0.5);} 
-        else if (deltaTime < howLong3) {
+            mDrive.tankDrive(-0.5, -0.5);
+        } else if (deltaTime < howLong3) {
             kIntake.stopShooter();
             kIntake.stopPickup();
             mDrive.tankDrive(0, -0.75);
         } else if (deltaTime < howLong4) {
-             kIntake.stopPickup();
+            kIntake.stopPickup();
             kIntake.stopShooter();
             mDrive.tankDrive(-0.5, -0.5);
         } else {
-             kIntake.stopPickup();
+            kIntake.stopPickup();
             kIntake.stopShooter();
             mDrive.tankDrive(0, 0);
         }
-    }public void shootOnlyAuto( Arm mArm, Intake kIntake){
-        System.out.println("Shoot Only");
-        deltaTime = startTime =Timer.getFPGATimestamp() - startTime;
+    }
 
-         if (deltaTime < howLong) {
-            mArm.goToPosition(mArm.speakerAuto); 
+    public void shootOnlyAuto(Arm mArm, Intake kIntake) {
+        System.out.println("Shoot Only");
+        deltaTime = startTime = Timer.getFPGATimestamp() - startTime;
+
+        if (deltaTime < howLong) {
+            mArm.goToPosition(mArm.speakerAuto);
             kIntake.shootRing(.5);
         } else {
             kIntake.stopShooter();
             kIntake.stopPickup();
+        }
     }
-}
-
 }
