@@ -63,12 +63,13 @@ public class Robot extends TimedRobot {
     String arcadeDrive = "Arcade Drive";
     String driveSelect;
     SendableChooser<String> m_chooserDrive = new SendableChooser<>();
-    String autonomous1 = "Autonomous 1";
-    String autonomous2 = "Autonomous 2";
+    String autonomous1 = "Autonomous Left";
+    String autonomous2 = "Autonomous Right";
+    String shootOnlyAuto = "Shoot Only";
     String autonomousSelect;
     SendableChooser<String> m_chooserAutonomous = new SendableChooser<>();
 
-    WPI_TalonSRX encoderSRX = new WPI_TalonSRX(1);
+    //WPI_TalonSRX encoderSRX = new WPI_TalonSRX(1);
     
     
 
@@ -101,6 +102,7 @@ public class Robot extends TimedRobot {
 
         m_chooserAutonomous.setDefaultOption("Autonomous 1", autonomous1);
         m_chooserAutonomous.addOption("Autonomous 2", autonomous2);
+        m_chooserAutonomous.addOption("Shoot Only", shootOnlyAuto);
         SmartDashboard.putData("Autonomous", m_chooserAutonomous);
         CameraServer.startAutomaticCapture();
 
@@ -112,7 +114,7 @@ public class Robot extends TimedRobot {
         // leftMEncoder.setInverted(true);
         // rightMEncoder.setInverted(true);
 
-        // mArm.goToPosition(mArm.speaker);
+         
 
     }
 
@@ -128,6 +130,10 @@ public class Robot extends TimedRobot {
 
         SmartDashboard.putNumber("Encoder Value Right", rightMEncoder.getPosition());
         SmartDashboard.putNumber("Encoder Value Left", leftMEncoder.getPosition());
+        autonomousSelect = m_chooserAutonomous.getSelected();
+
+        //double velocity = encoderSRX.getSelectedSensorVelocity(1);
+        //SmartDashboard.putNumber("Left Velocity", velocity);
 
         // Runs the Scheduler. This is responsible for polling buttons, adding
         // newly-scheduled
@@ -152,9 +158,8 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousInit() {
         // An example command will be run in autonomous
-        leftMEncoder.setPosition(0);
-        rightMEncoder.setPosition(0);
-        autonomousSelect = m_chooserAutonomous.getSelected();
+        
+       
         // schedule the autonomous command (example)
         mTimedAutonomous = new TimedAutonomous();
     }
@@ -164,8 +169,8 @@ public class Robot extends TimedRobot {
     public void autonomousPeriodic() {
 
         // kIntake.shootRing();
-
-        mTimedAutonomous.autoChooser(mDrive, kIntake);
+        
+        mTimedAutonomous.autoChooser(mDrive, mArm, autonomousSelect, kIntake);
 
         /*  switch (autonomousSelect) {
             case "Autonomous 1":
@@ -250,29 +255,29 @@ public class Robot extends TimedRobot {
         }
 
         if (mXboxOperator.getLeftBumper()) {
-            kIntake.shootRing();
-        } else {
+            kIntake.shootRing(.25);
+        } 
+        else{
             kIntake.stopShooter();
+            
         }
 
         // Arm Controls
         boolean armControl = SmartDashboard.getBoolean("Arm Manual Control", false);
 
         if (armControl) {
-            // mArm.teleop();
+             mArm.teleop();
         } else {
-            /*if (mXboxOperator.getYButtonPressed()) {
-                mArm.goToPosition(mArm.amp)
+            if (mXboxOperator.getYButtonPressed()) {
+                mArm.goToPosition(mArm.speaker);
             } else if (mXboxOperator.getXButtonPressed()) {
-                mArm.goToPosition(mArm.speaker)
+                mArm.goToPosition(mArm.amp);
             } else if (mXboxOperator.getBButtonPressed()) {
                 mArm.goToPosition(mArm.down);
-            } else {
-                mArm.stopArm();
-            }*/
+            } 
         }
 
-        // mArm.setTo0();
+         mArm.setTo0();
 
     }
 
