@@ -19,9 +19,10 @@ public class Arm {
     private RelativeEncoder m_encoder;
     public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput;
 
-    double speaker = 0;
-    double amp = 30;
-    double down = 68;
+    double amp = 0;
+    double speaker = 60;
+    double speakerAuto = 63;
+    double down = 78;
 
     public Arm(int armMotor1ID, int armMotor2ID) {
         // initialize motor
