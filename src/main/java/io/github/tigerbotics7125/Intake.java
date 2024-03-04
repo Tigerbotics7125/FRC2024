@@ -21,7 +21,7 @@ public class Intake {
     private RelativeEncoder m_shooterEncoder;
     private final double INTAKE_PICKUP_SPEED = 0.5;
     private final double INTAKE_SHOOT_SPEED = 1.0;
-    private final double SHOOT_SPEED = 0.25;
+    private final double SHOOT_SPEED = 0.5;
 
     public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, maxRPM;
 
@@ -69,12 +69,12 @@ public class Intake {
         }
     }
 
-    public void shootRing() {
+    public void shootRing(double shootSpeed) {
         shooting = true;
-        m_shooterPID.setReference(SHOOT_SPEED * maxRPM, CANSparkMax.ControlType.kVelocity);
+        m_shooterPID.setReference(shootSpeed * maxRPM, CANSparkMax.ControlType.kVelocity);
 
         // m_shooterMotorRight.set(SHOOT_SPEED);
-        if (m_shooterEncoder.getVelocity() >= (SHOOT_SPEED - .05) * maxRPM) {
+        if (m_shooterEncoder.getVelocity() >= (shootSpeed - .05) * maxRPM) {
 
             m_intakeMotor.set(INTAKE_SHOOT_SPEED);
         }
