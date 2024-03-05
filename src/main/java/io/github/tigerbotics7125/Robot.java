@@ -92,10 +92,7 @@ public class Robot extends TimedRobot {
                                                 m_driver.getRightTriggerAxis()
                                                         - m_driver.getLeftTriggerAxis(),
                                         m_driver::getLeftX,
-                                        () -> true),
-                                ControlType.TANK,
-                                m_drivetrain.tankDrive(
-                                        m_driver::getLeftY, m_driver::getRightY, () -> true)),
+                                        () -> true)),
                         m_driveControlChooser::getSelected));
         m_driveControlChooser.onChange(
                 controlType ->
@@ -117,8 +114,6 @@ public class Robot extends TimedRobot {
                                                             - m_driver.getLeftTriggerAxis(),
                                             m_driver::getLeftX,
                                             () -> true);
-                                    case TANK -> m_drivetrain.tankDrive(
-                                            m_driver::getLeftY, m_driver::getRightY, () -> true);
                                 }));
 
         m_chooserAutonomous.setDefaultOption("Autonomous 1", autonomous1);

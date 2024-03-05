@@ -18,8 +18,7 @@ public final class Constants {
             ARCADE,
             ARCADE_ROCKETLEAGUE,
             CURVE,
-            CURVE_ROCKETLEAGUE,
-            TANK;
+            CURVE_ROCKETLEAGUE;
         }
 
         public static final MotorType kMotorType = MotorType.kBrushed;

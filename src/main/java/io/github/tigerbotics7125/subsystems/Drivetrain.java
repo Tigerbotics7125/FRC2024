@@ -45,6 +45,7 @@ public class Drivetrain extends SubsystemBase {
 
         // TODO motor configs, we need to do this but we can later.
 
+        motor.burnFlash();
         Timer.delay(.02);
     }
 
@@ -71,20 +72,6 @@ public class Drivetrain extends SubsystemBase {
                                     xSpeed.getAsDouble(),
                                     zRotation.getAsDouble(),
                                     allowTurnInPlace.getAsBoolean());
-                    frontLeft.set(ws.left);
-                    frontRight.set(ws.right);
-                });
-    }
-
-    public Command tankDrive(
-            DoubleSupplier leftSpeed, DoubleSupplier rightSpeed, BooleanSupplier squareInputs) {
-        return run(
-                () -> {
-                    WheelSpeeds ws =
-                            DifferentialDrive.tankDriveIK(
-                                    leftSpeed.getAsDouble(),
-                                    rightSpeed.getAsDouble(),
-                                    squareInputs.getAsBoolean());
                     frontLeft.set(ws.left);
                     frontRight.set(ws.right);
                 });
