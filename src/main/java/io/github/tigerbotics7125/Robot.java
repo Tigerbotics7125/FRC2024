@@ -117,9 +117,8 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void robotPeriodic() {
+        CommandScheduler.getInstance().run();
 
-        SmartDashboard.putNumber("Encoder Value Right", rightMEncoder.getPosition());
-        SmartDashboard.putNumber("Encoder Value Left", leftMEncoder.getPosition());
         autonomousSelect = m_chooserAutonomous.getSelected();
 
         // double velocity = encoderSRX.getSelectedSensorVelocity(1);
