@@ -5,18 +5,13 @@
  */
 package io.github.tigerbotics7125;
 
-// import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-
-import com.revrobotics.CANSparkLowLevel.MotorType;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.RelativeEncoder;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import io.github.tigerbotics7125.subsystems.Drivetrain;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -29,12 +24,7 @@ public class Robot extends TimedRobot {
     private XboxController mXboxDrive = new XboxController(Constants.HID.kDriverControllerPort);
     private XboxController mXboxOperator = new XboxController(Constants.HID.kOperatorControllerPort);
 
-    private CANSparkMax leftMotor1 = new CANSparkMax(1, MotorType.kBrushed);
-    private CANSparkMax rightMotor1 = new CANSparkMax(2, MotorType.kBrushed);
-    private CANSparkMax leftMotor2 = new CANSparkMax(3, MotorType.kBrushed);
-    private CANSparkMax rightMotor2 = new CANSparkMax(4, MotorType.kBrushed);
-    RelativeEncoder leftMEncoder = leftMotor1.getAlternateEncoder(4096);
-    RelativeEncoder rightMEncoder = rightMotor1.getAlternateEncoder(4096);
+    private Drivetrain m_drivetrain = new Drivetrain();
 
     int intakeID = 5;
     int shooterLeftID = 6;
@@ -52,7 +42,6 @@ public class Robot extends TimedRobot {
 
     TimedAutonomous mTimedAutonomous;
 
-    private DifferentialDrive mDrive = new DifferentialDrive(leftMotor1, rightMotor1);
     String tankDrive = "Tank Drive";
     String arcadeDrive = "Arcade Drive";
     String driveSelect;
@@ -63,17 +52,6 @@ public class Robot extends TimedRobot {
     String autonomousSelect;
     SendableChooser<String> m_chooserAutonomous = new SendableChooser<>();
 
-    // WPI_TalonSRX encoderSRX = new WPI_TalonSRX(1);
-
-    /*
-     * private CANSparkMax mLeft1 = new CANSparkMax(0, MotorType.kBrushed);
-     * private CANSparkMax mLeft2 = new CANSparkMax(1, MotorType.kBrushed);
-     * private CANSparkMax mRight1 = new CANSparkMax(2, MotorType.kBrushed);
-     * private CANSparkMax mRight2 = new CANSparkMax(3, MotorType.kBrushed);
-     *
-     * private DifferentialDrive mDrive = new DifferentialDrive(mLeft1, mRight1);
-     * private XboxController mXbox = new XboxController(0);
-     */
     /**
      * This function is run when the robot is first started up and should be used for any
      * initialization code.
@@ -81,12 +59,6 @@ public class Robot extends TimedRobot {
     @Override
     public void robotInit() {
         // Configure the trigger bindings
-
-        leftMotor2.follow(leftMotor1);
-        rightMotor2.follow(rightMotor1);
-
-        rightMotor1.setInverted(true);
-        rightMotor2.setInverted(true);
 
         m_chooserDrive.setDefaultOption("Tank Drive", tankDrive);
         m_chooserDrive.addOption("Arcade Drive", arcadeDrive);
@@ -100,11 +72,6 @@ public class Robot extends TimedRobot {
 
         kIntake = new Intake(intakeID, shooterLeftID, shooterRightID, shooterSpeed, intakeSpeed);
         mArm = new Arm(armMotor1ID, armMotor2ID);
-
-        leftMEncoder.setPosition(0);
-        rightMEncoder.setPosition(0);
-        // leftMEncoder.setInverted(true);
-        // rightMEncoder.setInverted(true);
 
     }
 
@@ -123,14 +90,6 @@ public class Robot extends TimedRobot {
 
         // double velocity = encoderSRX.getSelectedSensorVelocity(1);
         // SmartDashboard.putNumber("Left Velocity", velocity);
-
-        // Runs the Scheduler. This is responsible for polling buttons, adding
-        // newly-scheduled
-        // commands, running already-scheduled commands, removing finished or
-        // interrupted commands,
-        // and running subsystem periodic() methods. This must be called from the
-        // robot's periodic
-        // block in order for anything in the Command-based framework to work.
 
     }
 
@@ -227,9 +186,6 @@ public class Robot extends TimedRobot {
             default:
                 break;
         }
-
-        SmartDashboard.putNumber("Left Motor Value", leftMotor1.get());
-        SmartDashboard.putNumber("Right Motor Value", rightMotor1.get());
 
         // intakeSpeed = SmartDashboard.getNumber("Intake Speed", .5);
         // shooterSpeed = SmartDashboard.getNumber("Shooter Speed", 1);
