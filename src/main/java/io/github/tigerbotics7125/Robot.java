@@ -7,11 +7,14 @@ package io.github.tigerbotics7125;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import io.github.tigerbotics7125.Constants.DriveTrain.ControlType;
 import io.github.tigerbotics7125.subsystems.Drivetrain;
+import java.util.Map;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -21,8 +24,10 @@ import io.github.tigerbotics7125.subsystems.Drivetrain;
  */
 public class Robot extends TimedRobot {
 
-    private XboxController mXboxDrive = new XboxController(Constants.HID.kDriverControllerPort);
-    private XboxController mXboxOperator = new XboxController(Constants.HID.kOperatorControllerPort);
+    private CommandXboxController m_driver =
+            new CommandXboxController(Constants.HID.kDriverControllerPort);
+    private CommandXboxController m_operator =
+            new CommandXboxController(Constants.HID.kOperatorControllerPort);
 
     private Drivetrain m_drivetrain = new Drivetrain();
 
@@ -42,10 +47,8 @@ public class Robot extends TimedRobot {
 
     TimedAutonomous mTimedAutonomous;
 
-    String tankDrive = "Tank Drive";
-    String arcadeDrive = "Arcade Drive";
-    String driveSelect;
-    SendableChooser<String> m_chooserDrive = new SendableChooser<>();
+    SendableChooser<Constants.DriveTrain.ControlType> m_driveControlChooser =
+            new SendableChooser<>();
     String autonomous1 = "Autonomous Left";
     String autonomous2 = "Autonomous Right";
     String shootOnlyAuto = "Shoot Only";
@@ -60,9 +63,63 @@ public class Robot extends TimedRobot {
     public void robotInit() {
         // Configure the trigger bindings
 
-        m_chooserDrive.setDefaultOption("Tank Drive", tankDrive);
-        m_chooserDrive.addOption("Arcade Drive", arcadeDrive);
-        SmartDashboard.putData("Drive choices", m_chooserDrive);
+        m_driveControlChooser.setDefaultOption(
+                ControlType.CURVE_ROCKETLEAGUE.name(), ControlType.CURVE_ROCKETLEAGUE);
+        for (ControlType controlType : ControlType.values()) {
+            if (controlType.equals(ControlType.CURVE_ROCKETLEAGUE)) continue;
+            m_driveControlChooser.addOption(controlType.name(), controlType);
+        }
+
+        m_drivetrain.setDefaultCommand(
+                Commands.select(
+                        Map.of(
+                                ControlType.ARCADE,
+                                m_drivetrain.arcadeDrive(
+                                        m_driver::getLeftY, m_driver::getRightX, () -> true),
+                                ControlType.ARCADE_ROCKETLEAGUE,
+                                m_drivetrain.arcadeDrive(
+                                        () ->
+                                                m_driver.getRightTriggerAxis()
+                                                        - m_driver.getLeftTriggerAxis(),
+                                        m_driver::getLeftX,
+                                        () -> true),
+                                ControlType.CURVE,
+                                m_drivetrain.curvatureDrive(
+                                        m_driver::getLeftY, m_driver::getRightX, () -> true),
+                                ControlType.CURVE_ROCKETLEAGUE,
+                                m_drivetrain.curvatureDrive(
+                                        () ->
+                                                m_driver.getRightTriggerAxis()
+                                                        - m_driver.getLeftTriggerAxis(),
+                                        m_driver::getLeftX,
+                                        () -> true),
+                                ControlType.TANK,
+                                m_drivetrain.tankDrive(
+                                        m_driver::getLeftY, m_driver::getRightY, () -> true)),
+                        m_driveControlChooser::getSelected));
+        m_driveControlChooser.onChange(
+                controlType ->
+                        m_drivetrain.setDefaultCommand(
+                                switch (controlType) {
+                                    case ARCADE -> m_drivetrain.arcadeDrive(
+                                            m_driver::getLeftY, m_driver::getRightX, () -> true);
+                                    case ARCADE_ROCKETLEAGUE -> m_drivetrain.arcadeDrive(
+                                            () ->
+                                                    m_driver.getRightTriggerAxis()
+                                                            - m_driver.getLeftTriggerAxis(),
+                                            m_driver::getLeftX,
+                                            () -> true);
+                                    case CURVE -> m_drivetrain.curvatureDrive(
+                                            m_driver::getLeftY, m_driver::getRightX, () -> true);
+                                    case CURVE_ROCKETLEAGUE -> m_drivetrain.curvatureDrive(
+                                            () ->
+                                                    m_driver.getRightTriggerAxis()
+                                                            - m_driver.getLeftTriggerAxis(),
+                                            m_driver::getLeftX,
+                                            () -> true);
+                                    case TANK -> m_drivetrain.tankDrive(
+                                            m_driver::getLeftY, m_driver::getRightY, () -> true);
+                                }));
 
         m_chooserAutonomous.setDefaultOption("Autonomous 1", autonomous1);
         m_chooserAutonomous.addOption("Autonomous 2", autonomous2);
@@ -72,7 +129,6 @@ public class Robot extends TimedRobot {
 
         kIntake = new Intake(intakeID, shooterLeftID, shooterRightID, shooterSpeed, intakeSpeed);
         mArm = new Arm(armMotor1ID, armMotor2ID);
-
     }
 
     /**
@@ -87,6 +143,7 @@ public class Robot extends TimedRobot {
         CommandScheduler.getInstance().run();
 
         autonomousSelect = m_chooserAutonomous.getSelected();
+        SmartDashboard.putData("/DT/ControlType", m_driveControlChooser);
 
         // double velocity = encoderSRX.getSelectedSensorVelocity(1);
         // SmartDashboard.putNumber("Left Velocity", velocity);
@@ -119,36 +176,40 @@ public class Robot extends TimedRobot {
 
         mTimedAutonomous.autoChooser(mDrive, mArm, autonomousSelect, kIntake);
 
-        /*  switch (autonomousSelect) {
-            case "Autonomous 1":
-                while (rightMEncoder.getPosition() < (turnDistance / wheelCircumference)) {
-                    mDrive.tankDrive(0, .5);
-                }
-                leftMEncoder.setPosition(0);
-                rightMEncoder.setPosition(0);
-
-                while (rightMEncoder.getPosition() < (autonomousDistance / wheelCircumference)
-                        && leftMEncoder.getPosition() < (autonomousDistance / wheelCircumference)) {
-                    mDrive.tankDrive(.5, .5);
-                }
-                break;
-
-            case "Autonomous 2":
-                while (leftMEncoder.getPosition() < (turnDistance / wheelCircumference)) {
-                    mDrive.tankDrive(.5, 0);
-                }
-                leftMEncoder.setPosition(0);
-                rightMEncoder.setPosition(0);
-
-                while (rightMEncoder.getPosition() < (autonomousDistance / wheelCircumference)
-                        && leftMEncoder.getPosition() < (autonomousDistance / wheelCircumference)) {
-                    mDrive.tankDrive(0.5, .5);
-                }
-                break;
-
-            default:
-                break;
-        }*/
+        /*
+         * switch (autonomousSelect) {
+         * case "Autonomous 1":
+         * while (rightMEncoder.getPosition() < (turnDistance / wheelCircumference)) {
+         * mDrive.tankDrive(0, .5);
+         * }
+         * leftMEncoder.setPosition(0);
+         * rightMEncoder.setPosition(0);
+         *
+         * while (rightMEncoder.getPosition() < (autonomousDistance /
+         * wheelCircumference)
+         * && leftMEncoder.getPosition() < (autonomousDistance / wheelCircumference)) {
+         * mDrive.tankDrive(.5, .5);
+         * }
+         * break;
+         *
+         * case "Autonomous 2":
+         * while (leftMEncoder.getPosition() < (turnDistance / wheelCircumference)) {
+         * mDrive.tankDrive(.5, 0);
+         * }
+         * leftMEncoder.setPosition(0);
+         * rightMEncoder.setPosition(0);
+         *
+         * while (rightMEncoder.getPosition() < (autonomousDistance /
+         * wheelCircumference)
+         * && leftMEncoder.getPosition() < (autonomousDistance / wheelCircumference)) {
+         * mDrive.tankDrive(0.5, .5);
+         * }
+         * break;
+         *
+         * default:
+         * break;
+         * }
+         */
     }
 
     @Override
@@ -157,7 +218,6 @@ public class Robot extends TimedRobot {
         // teleop starts running. If you want the autonomous to
         // continue until interrupted by another command, remove
         // this line or comment it out.
-        driveSelect = m_chooserDrive.getSelected();
 
         SmartDashboard.putNumber("Intake Speed", .5);
         SmartDashboard.putNumber("Shooter Speed", 1);
@@ -168,24 +228,6 @@ public class Robot extends TimedRobot {
     /** This function is called periodically during operator control. */
     @Override
     public void teleopPeriodic() {
-
-        driveSelect = m_chooserDrive.getSelected();
-        // System.out.println("Drive mode: " + driveSelect);
-        SmartDashboard.putNumber("Rotations Right Wheel", rightMEncoder.getPosition());
-
-        switch (driveSelect) {
-            case "Tank Drive":
-                mDrive.tankDrive(mXboxDrive.getLeftY(), mXboxDrive.getRightY());
-                break;
-
-            case "Arcade Drive":
-                mDrive.arcadeDrive(mXboxDrive.getLeftY(), mXboxDrive.getLeftX(), false);
-
-                break;
-
-            default:
-                break;
-        }
 
         // intakeSpeed = SmartDashboard.getNumber("Intake Speed", .5);
         // shooterSpeed = SmartDashboard.getNumber("Shooter Speed", 1);

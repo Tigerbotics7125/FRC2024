@@ -1,23 +1,30 @@
+/*
+ * Copyright (c) 2024 Tigerbotics and it's members. All rights reserved.
+ * This work is licensed under the terms of the GNU GPLv3 license
+ * found in the root directory of this project.
+ */
 package io.github.tigerbotics7125.subsystems;
 
 import com.revrobotics.CANSparkMax;
-
 import edu.wpi.first.wpilibj.Timer;
-
-import java.util.function.BooleanSupplier;
-import java.util.function.DoubleSupplier;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive.WheelSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import io.github.tigerbotics7125.Constants;
+import java.util.function.BooleanSupplier;
+import java.util.function.DoubleSupplier;
 
 public class Drivetrain extends SubsystemBase {
-    private CANSparkMax frontLeft = new CANSparkMax(Constants.DriveTrain.kFrontLeftID, Constants.DriveTrain.kMotorType);
-    private CANSparkMax frontRight = new CANSparkMax(Constants.DriveTrain.kFrontRightID, Constants.DriveTrain.kMotorType);
-    private CANSparkMax backLeft = new CANSparkMax(Constants.DriveTrain.kBackLeftID, Constants.DriveTrain.kMotorType);
-    private CANSparkMax backRight = new CANSparkMax(Constants.DriveTrain.kBackRightID, Constants.DriveTrain.kMotorType);
+    private CANSparkMax frontLeft =
+            new CANSparkMax(Constants.DriveTrain.kFrontLeftID, Constants.DriveTrain.kMotorType);
+    private CANSparkMax frontRight =
+            new CANSparkMax(Constants.DriveTrain.kFrontRightID, Constants.DriveTrain.kMotorType);
+    private CANSparkMax backLeft =
+            new CANSparkMax(Constants.DriveTrain.kBackLeftID, Constants.DriveTrain.kMotorType);
+    private CANSparkMax backRight =
+            new CANSparkMax(Constants.DriveTrain.kBackRightID, Constants.DriveTrain.kMotorType);
 
     public Drivetrain() {
         configureMotor(frontLeft);
@@ -41,31 +48,46 @@ public class Drivetrain extends SubsystemBase {
         Timer.delay(.02);
     }
 
-    public Command arcadeDrive(DoubleSupplier xSpeed, DoubleSupplier zRotation, BooleanSupplier squareInputs) {
-        return run(() -> {
-            WheelSpeeds ws = DifferentialDrive.arcadeDriveIK(xSpeed.getAsDouble(), zRotation.getAsDouble(),
-                    squareInputs.getAsBoolean());
-            frontLeft.set(ws.left);
-            frontRight.set(ws.right);
-        });
+    public Command arcadeDrive(
+            DoubleSupplier xSpeed, DoubleSupplier zRotation, BooleanSupplier squareInputs) {
+        return run(
+                () -> {
+                    WheelSpeeds ws =
+                            DifferentialDrive.arcadeDriveIK(
+                                    xSpeed.getAsDouble(),
+                                    zRotation.getAsDouble(),
+                                    squareInputs.getAsBoolean());
+                    frontLeft.set(ws.left);
+                    frontRight.set(ws.right);
+                });
     }
 
-    public Command curvatureDrive(DoubleSupplier xSpeed, DoubleSupplier zRotation, BooleanSupplier allowTurnInPlace) {
-        return run(() -> {
-            WheelSpeeds ws = DifferentialDrive.curvatureDriveIK(xSpeed.getAsDouble(), zRotation.getAsDouble(),
-                    allowTurnInPlace.getAsBoolean());
-            frontLeft.set(ws.left);
-            frontRight.set(ws.right);
-        });
+    public Command curvatureDrive(
+            DoubleSupplier xSpeed, DoubleSupplier zRotation, BooleanSupplier allowTurnInPlace) {
+        return run(
+                () -> {
+                    WheelSpeeds ws =
+                            DifferentialDrive.curvatureDriveIK(
+                                    xSpeed.getAsDouble(),
+                                    zRotation.getAsDouble(),
+                                    allowTurnInPlace.getAsBoolean());
+                    frontLeft.set(ws.left);
+                    frontRight.set(ws.right);
+                });
     }
 
-    public Command tankDrive(DoubleSupplier leftSpeed, DoubleSupplier rightSpeed, BooleanSupplier squareInputs) {
-        return run(() -> {
-            WheelSpeeds ws = DifferentialDrive.tankDriveIK(leftSpeed.getAsDouble(), rightSpeed.getAsDouble(),
-                    squareInputs.getAsBoolean());
-            frontLeft.set(ws.left);
-            frontRight.set(ws.right);
-        });
+    public Command tankDrive(
+            DoubleSupplier leftSpeed, DoubleSupplier rightSpeed, BooleanSupplier squareInputs) {
+        return run(
+                () -> {
+                    WheelSpeeds ws =
+                            DifferentialDrive.tankDriveIK(
+                                    leftSpeed.getAsDouble(),
+                                    rightSpeed.getAsDouble(),
+                                    squareInputs.getAsBoolean());
+                    frontLeft.set(ws.left);
+                    frontRight.set(ws.right);
+                });
     }
 
     @Override
