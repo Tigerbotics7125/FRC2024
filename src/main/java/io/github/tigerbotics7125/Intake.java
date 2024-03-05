@@ -15,12 +15,9 @@ public class Intake {
 
     private CANSparkMax m_shooterMotorLeft;
     private CANSparkMax m_shooterMotorRight;
-    private CANSparkMax m_intakeMotor;
 
     private SparkPIDController m_shooterPID;
     private RelativeEncoder m_shooterEncoder;
-    private final double INTAKE_PICKUP_SPEED = 0.5;
-    private final double INTAKE_SHOOT_SPEED = 1.0;
     private final double SHOOT_SPEED = 0.5;
 
     public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, maxRPM;
@@ -56,17 +53,9 @@ public class Intake {
         m_shooterPID.setFF(kFF);
         m_shooterPID.setOutputRange(kMinOutput, kMaxOutput);
 
-        m_intakeMotor = new CANSparkMax(intakeID, MotorType.kBrushless);
         m_shooterMotorLeft.setInverted(true);
         m_shooterMotorRight.setInverted(true);
-        m_intakeMotor.setInverted(false);
         m_shooterMotorLeft.follow(m_shooterMotorRight);
-    }
-
-    public void pickupRing() {
-        if (!shooting) {
-            m_intakeMotor.set(INTAKE_PICKUP_SPEED);
-        }
     }
 
     public void shootRing(double shootSpeed) {
@@ -76,12 +65,8 @@ public class Intake {
         // m_shooterMotorRight.set(SHOOT_SPEED);
         if (m_shooterEncoder.getVelocity() >= (shootSpeed - .05) * maxRPM) {
 
-            m_intakeMotor.set(INTAKE_SHOOT_SPEED);
+            // m_intakeMotor.set(INTAKE_SHOOT_SPEED);
         }
-    }
-
-    public void stopPickup() {
-        if (!shooting) m_intakeMotor.set(0);
     }
 
     public void stopShooter() {
@@ -91,7 +76,4 @@ public class Intake {
         SmartDashboard.putNumber("ProcessVariable", m_shooterEncoder.getVelocity());
     }
 
-    public void backUpRing(double axisValue) {
-        m_intakeMotor.set(axisValue * -.25);
-    }
 }

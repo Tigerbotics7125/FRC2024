@@ -27,4 +27,15 @@ public final class Constants {
         public static final int kBackLeftID = 3;
         public static final int kBackRightID = 4;
     }
+
+    public static final class Intake {
+        public static final MotorType kMotorType = MotorType.kBrushless;
+        public static final int kIntakeID = 5;
+
+        public static final boolean kInverted = false;
+
+        public static final double kIntakeSpeed = 0.5;
+        public static final double kFeedSpeed = 1D;
+        public static final double kMaxOutakeSpeed = -0.25;
+    }
 }

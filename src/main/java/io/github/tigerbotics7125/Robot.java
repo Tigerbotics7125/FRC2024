@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import io.github.tigerbotics7125.Constants.DriveTrain.ControlType;
 import io.github.tigerbotics7125.subsystems.Drivetrain;
+import io.github.tigerbotics7125.subsystems.Intake;
 import java.util.Map;
 
 /**
@@ -30,13 +31,11 @@ public class Robot extends TimedRobot {
             new CommandXboxController(Constants.HID.kOperatorControllerPort);
 
     private Drivetrain m_drivetrain = new Drivetrain();
+    private Intake m_intake = new Intake();
 
-    int intakeID = 5;
     int shooterLeftID = 6;
     int shooterRightID = 7;
     double shooterSpeed = 1;
-    double intakeSpeed = .5;
-    Intake kIntake;
     Arm mArm;
     int armMotor1ID = 8;
     int armMotor2ID = 9;
@@ -55,7 +54,7 @@ public class Robot extends TimedRobot {
     String autonomousSelect;
     SendableChooser<String> m_chooserAutonomous = new SendableChooser<>();
 
-    /**
+/**
      * This function is run when the robot is first started up and should be used for any
      * initialization code.
      */
@@ -114,7 +113,12 @@ public class Robot extends TimedRobot {
                                                             - m_driver.getLeftTriggerAxis(),
                                             m_driver::getLeftX,
                                             () -> true);
-                                }));
+                                        }));
+
+        m_intake.setDefaultCommand(m_intake.disable());
+
+        m_operator.rightBumper().onTrue(m_intake.intake());
+        m_operator.rightBumper().onFalse(m_intake.outtake(m_operator::getRightTriggerAxis));
 
         m_chooserAutonomous.setDefaultOption("Autonomous 1", autonomous1);
         m_chooserAutonomous.addOption("Autonomous 2", autonomous2);
@@ -122,7 +126,6 @@ public class Robot extends TimedRobot {
         SmartDashboard.putData("Autonomous", m_chooserAutonomous);
         CameraServer.startAutomaticCapture();
 
-        kIntake = new Intake(intakeID, shooterLeftID, shooterRightID, shooterSpeed, intakeSpeed);
         mArm = new Arm(armMotor1ID, armMotor2ID);
     }
 
@@ -228,12 +231,7 @@ public class Robot extends TimedRobot {
         // shooterSpeed = SmartDashboard.getNumber("Shooter Speed", 1);
 
         // Intake and shooter controls
-        if (mXboxOperator.getRightBumper()) {
-            kIntake.pickupRing();
-        } else {
-            kIntake.stopPickup();
-            kIntake.backUpRing(mXboxOperator.getRightTriggerAxis());
-        }
+
 
         if (mXboxOperator.getLeftBumper()) {
             kIntake.shootRing(.25);
