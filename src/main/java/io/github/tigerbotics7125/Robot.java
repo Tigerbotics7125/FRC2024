@@ -26,11 +26,8 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
  */
 public class Robot extends TimedRobot {
 
-    // private RobotContainer m_robotContainer;
-
-    // The robot's subsystems and commands are defined here...
-
-    // Additional controllers may be added if needed.
+    private XboxController mXboxDrive = new XboxController(Constants.HID.kDriverControllerPort);
+    private XboxController mXboxOperator = new XboxController(Constants.HID.kOperatorControllerPort);
 
     private CANSparkMax leftMotor1 = new CANSparkMax(1, MotorType.kBrushed);
     private CANSparkMax rightMotor1 = new CANSparkMax(2, MotorType.kBrushed);
@@ -56,8 +53,6 @@ public class Robot extends TimedRobot {
     TimedAutonomous mTimedAutonomous;
 
     private DifferentialDrive mDrive = new DifferentialDrive(leftMotor1, rightMotor1);
-    private XboxController mXboxDrive = new XboxController(0);
-    private XboxController mXboxOperator = new XboxController(1);
     String tankDrive = "Tank Drive";
     String arcadeDrive = "Arcade Drive";
     String driveSelect;
