@@ -56,7 +56,7 @@ public class Shooter extends SubsystemBase {
     }
 
     public Command disable() {
-        return runOnce(() -> m_PID.setSetpoint(0)).andThen(m_left::stopMotor);
+        return run(m_left::stopMotor);
     }
 
     public Command prepShooter() {
@@ -69,9 +69,22 @@ public class Shooter extends SubsystemBase {
                 .andThen(intake.feedShooter().withTimeout(1));
     }
 
-    @Override
-    public void periodic() {
-        m_left.setVoltage(12D * m_PID.calculate(m_encoder.getVelocity()) + Constants.Shooter.kFF);
-        // m_right follows m_left
+    public Command pidControl() {
+        return run(() -> {
+            double pidContribution = 12D * m_PID.calculate(m_encoder.getVelocity());
+            m_left.setVoltage(pidContribution + Constants.Shooter.kFF);
+        });
     }
+
+    /**
+     * TODO seth: create a method to keep the shooter at a constant but slightly
+     * less velocity than our shooter velocity. This should be the new default method.
+     * Eventually this should consider our distance from the speaker so that it automatically
+     * ramps up to shooting speed when we get closer. Not entirely relevant but also should look
+     * into using the InterpolatingMap or whatever its called, and some data we can create to find values
+     * for shooting from a distance.
+     */
+
+    @Override
+    public void periodic() {}
 }
