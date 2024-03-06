@@ -30,8 +30,8 @@ public class Shooter extends SubsystemBase {
     private RelativeEncoder m_encoder = m_left.getEncoder();
 
     public Shooter() {
-        configMotor(m_left);
-        configMotor(m_right);
+        configureMotor(m_left);
+        configureMotor(m_right);
 
         m_left.setInverted(Constants.Shooter.kInverted);
         m_right.follow(m_left);
@@ -39,7 +39,7 @@ public class Shooter extends SubsystemBase {
         m_PID.setTolerance(0, Constants.Shooter.kPIDTolerance);
     }
 
-    private void configMotor(CANSparkMax motor) {
+    private void configureMotor(CANSparkMax motor) {
         motor.restoreFactoryDefaults();
         Timer.delay(.02);
 

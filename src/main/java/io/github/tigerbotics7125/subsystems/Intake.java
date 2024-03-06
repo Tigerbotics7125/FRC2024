@@ -19,10 +19,10 @@ public class Intake extends SubsystemBase {
             new CANSparkMax(Constants.Intake.kIntakeID, Constants.Intake.kMotorType);
 
     public Intake() {
-        configMotor(m_intake);
+        configureMotor(m_intake);
     }
 
-    private void configMotor(CANSparkMax motor) {
+    private void configureMotor(CANSparkMax motor) {
         motor.restoreFactoryDefaults();
         Timer.delay(.02);
 
