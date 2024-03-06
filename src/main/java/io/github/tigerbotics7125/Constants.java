@@ -6,6 +6,8 @@
 package io.github.tigerbotics7125;
 
 import com.revrobotics.CANSparkLowLevel.MotorType;
+import edu.wpi.first.math.controller.ArmFeedforward;
+import edu.wpi.first.math.controller.PIDController;
 
 public final class Constants {
     public static final class HID {
@@ -53,5 +55,36 @@ public final class Constants {
         public static final double kPIDTolerance = 300; // rpm
 
         public static final double kShootRPM = 5700;
+    }
+
+    public static final class Arm {
+        public static final MotorType kMotorType = MotorType.kBrushless;
+        public static final int kLeftID = 8;
+        public static final int kRightID = 9;
+
+        public static final boolean kFollowerInverted = true;
+
+        public static final double kP = .04;
+        public static final double kI = 1e-7; // Integral term should be done with FF instead.
+        public static final double kD = .5;
+        public static final PIDController kPID = new PIDController(kP, kI, kD);
+        // TODO look into sysid to characterize this.
+        public static final double kS = 0;
+        public static final double kG = 0;
+        public static final double kV = 0;
+        public static final ArmFeedforward kFF = new ArmFeedforward(kS, kG, kV);
+
+        public enum ArmState {
+            AMP(0D),
+            SPEAKER(60D),
+            SPEAKERAUTO(63D),
+            INTAKE(78D);
+
+            public final double kPosition;
+
+            ArmState(double position) {
+                kPosition = position;
+            }
+        }
     }
 }

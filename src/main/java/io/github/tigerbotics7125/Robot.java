@@ -5,8 +5,6 @@
  */
 package io.github.tigerbotics7125;
 
-import java.util.Map;
-
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -14,17 +12,14 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import io.github.tigerbotics7125.Constants.Arm.ArmState;
 import io.github.tigerbotics7125.Constants.DriveTrain.ControlType;
+import io.github.tigerbotics7125.subsystems.Arm;
 import io.github.tigerbotics7125.subsystems.Drivetrain;
 import io.github.tigerbotics7125.subsystems.Intake;
 import io.github.tigerbotics7125.subsystems.Shooter;
+import java.util.Map;
 
-/**
- * The VM is configured to automatically run this class, and to call the functions corresponding to
- * each mode, as described in the TimedRobot documentation. If you change the name of this class or
- * the package after creating this project, you must also update the build.gradle file in the
- * project.
- */
 public class Robot extends TimedRobot {
 
     private CommandXboxController m_driver =
@@ -35,10 +30,7 @@ public class Robot extends TimedRobot {
     private Drivetrain m_drivetrain = new Drivetrain();
     private Intake m_intake = new Intake();
     private Shooter m_shooter = new Shooter();
-
-    Arm mArm;
-    int armMotor1ID = 8;
-    int armMotor2ID = 9;
+    private Arm m_arm = new Arm();
 
     double autonomousDistance = 50;
     double turnDistance = 21.991148;
@@ -116,152 +108,69 @@ public class Robot extends TimedRobot {
                                 }));
 
         m_intake.setDefaultCommand(m_intake.disable());
-        m_shooter.setDefaultCommand(m_shooter.disable());
+        m_shooter.setDefaultCommand(m_shooter.pidControl());
+        m_arm.setDefaultCommand(m_arm.pidControl());
 
-        m_operator.leftBumper().onTrue(m_shooter.shootNote(m_intake));
         m_operator.rightBumper().onTrue(m_intake.intake());
         m_operator.rightBumper().onFalse(m_intake.outtake(m_operator::getRightTriggerAxis));
+        m_operator.leftBumper().onTrue(m_shooter.shootNote(m_intake));
+        m_operator.leftBumper().onFalse(m_shooter.disable());
+        m_operator.y().onTrue(m_arm.setState(ArmState.SPEAKER));
+        m_operator.x().onTrue(m_arm.setState(ArmState.AMP));
+        m_operator.b().onTrue(m_arm.setState(ArmState.INTAKE));
+        // TODO tell seth this is different.
+        m_operator.leftStick().onTrue(m_arm.resetEncoder());
 
         m_chooserAutonomous.setDefaultOption("Autonomous 1", autonomous1);
         m_chooserAutonomous.addOption("Autonomous 2", autonomous2);
         m_chooserAutonomous.addOption("Shoot Only", shootOnlyAuto);
         SmartDashboard.putData("Autonomous", m_chooserAutonomous);
         CameraServer.startAutomaticCapture();
-
-        mArm = new Arm(armMotor1ID, armMotor2ID);
     }
 
-    /**
-     * This function is called every 20 ms, no matter the mode. Use this for items like diagnostics
-     * that you want ran during disabled, autonomous, teleoperated and test.
-     *
-     * <p>This runs after the mode specific periodic functions, but before LiveWindow and
-     * SmartDashboard integrated updating.
-     */
     @Override
     public void robotPeriodic() {
         CommandScheduler.getInstance().run();
 
         autonomousSelect = m_chooserAutonomous.getSelected();
         SmartDashboard.putData("/DT/ControlType", m_driveControlChooser);
-
-        // double velocity = encoderSRX.getSelectedSensorVelocity(1);
-        // SmartDashboard.putNumber("Left Velocity", velocity);
-
     }
 
-    /** This function is called once each time the robot enters Disabled mode. */
     @Override
     public void disabledInit() {}
 
     @Override
     public void disabledPeriodic() {}
 
-    /**
-     * This autonomous runs the autonomous command selected by your {@link RobotContainer} class.
-     */
     @Override
     public void autonomousInit() {
-        // An example command will be run in autonomous
-
-        // schedule the autonomous command (example)
         mTimedAutonomous = new TimedAutonomous();
     }
 
-    /** This function is called periodically during autonomous. */
     @Override
     public void autonomousPeriodic() {
-
-        // kIntake.shootRing();
-
-        mTimedAutonomous.autoChooser(mDrive, mArm, autonomousSelect, kIntake);
-
-        /*
-         * switch (autonomousSelect) {
-         * case "Autonomous 1":
-         * while (rightMEncoder.getPosition() < (turnDistance / wheelCircumference)) {
-         * mDrive.tankDrive(0, .5);
-         * }
-         * leftMEncoder.setPosition(0);
-         * rightMEncoder.setPosition(0);
-         *
-         * while (rightMEncoder.getPosition() < (autonomousDistance /
-         * wheelCircumference)
-         * && leftMEncoder.getPosition() < (autonomousDistance / wheelCircumference)) {
-         * mDrive.tankDrive(.5, .5);
-         * }
-         * break;
-         *
-         * case "Autonomous 2":
-         * while (leftMEncoder.getPosition() < (turnDistance / wheelCircumference)) {
-         * mDrive.tankDrive(.5, 0);
-         * }
-         * leftMEncoder.setPosition(0);
-         * rightMEncoder.setPosition(0);
-         *
-         * while (rightMEncoder.getPosition() < (autonomousDistance /
-         * wheelCircumference)
-         * && leftMEncoder.getPosition() < (autonomousDistance / wheelCircumference)) {
-         * mDrive.tankDrive(0.5, .5);
-         * }
-         * break;
-         *
-         * default:
-         * break;
-         * }
-         */
     }
 
     @Override
     public void teleopInit() {
-        // This makes sure that the autonomous stops running when
-        // teleop starts running. If you want the autonomous to
-        // continue until interrupted by another command, remove
-        // this line or comment it out.
-
-        SmartDashboard.putNumber("Intake Speed", .5);
-        SmartDashboard.putNumber("Shooter Speed", 1);
-
-        SmartDashboard.putBoolean("Arm Manual Control", false);
+        // Make sure autonomous commands are canceled for teleop
+        CommandScheduler.getInstance().cancelAll();
     }
 
     /** This function is called periodically during operator control. */
     @Override
-    public void teleopPeriodic() {
-
-        // Arm Controls
-        boolean armControl = SmartDashboard.getBoolean("Arm Manual Control", false);
-
-        if (armControl) {
-            mArm.teleop();
-        } else {
-            if (mXboxOperator.getYButtonPressed()) {
-                mArm.goToPosition(mArm.speaker);
-            } else if (mXboxOperator.getXButtonPressed()) {
-                mArm.goToPosition(mArm.amp);
-            } else if (mXboxOperator.getBButtonPressed()) {
-                mArm.goToPosition(mArm.down);
-            }
-        }
-
-        mArm.setTo0();
-    }
+    public void teleopPeriodic() {}
 
     @Override
     public void testInit() {
-        // Cancels all running commands at the start of test mode.
-        CommandScheduler.getInstance().cancelAll();
     }
 
-    /** This function is called periodically during test mode. */
     @Override
     public void testPeriodic() {}
 
-    /** This function is called once when the robot is first started up. */
     @Override
     public void simulationInit() {}
 
-    /** This function is called periodically whilst in simulation. */
     @Override
     public void simulationPeriodic() {}
 }
