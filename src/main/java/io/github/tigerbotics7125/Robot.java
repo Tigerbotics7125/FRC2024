@@ -5,6 +5,8 @@
  */
 package io.github.tigerbotics7125;
 
+import java.util.Map;
+
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -15,7 +17,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import io.github.tigerbotics7125.Constants.DriveTrain.ControlType;
 import io.github.tigerbotics7125.subsystems.Drivetrain;
 import io.github.tigerbotics7125.subsystems.Intake;
-import java.util.Map;
+import io.github.tigerbotics7125.subsystems.Shooter;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -32,10 +34,8 @@ public class Robot extends TimedRobot {
 
     private Drivetrain m_drivetrain = new Drivetrain();
     private Intake m_intake = new Intake();
+    private Shooter m_shooter = new Shooter();
 
-    int shooterLeftID = 6;
-    int shooterRightID = 7;
-    double shooterSpeed = 1;
     Arm mArm;
     int armMotor1ID = 8;
     int armMotor2ID = 9;
@@ -54,7 +54,7 @@ public class Robot extends TimedRobot {
     String autonomousSelect;
     SendableChooser<String> m_chooserAutonomous = new SendableChooser<>();
 
-/**
+    /**
      * This function is run when the robot is first started up and should be used for any
      * initialization code.
      */
@@ -113,10 +113,12 @@ public class Robot extends TimedRobot {
                                                             - m_driver.getLeftTriggerAxis(),
                                             m_driver::getLeftX,
                                             () -> true);
-                                        }));
+                                }));
 
         m_intake.setDefaultCommand(m_intake.disable());
+        m_shooter.setDefaultCommand(m_shooter.disable());
 
+        m_operator.leftBumper().onTrue(m_shooter.shootNote(m_intake));
         m_operator.rightBumper().onTrue(m_intake.intake());
         m_operator.rightBumper().onFalse(m_intake.outtake(m_operator::getRightTriggerAxis));
 
@@ -226,18 +228,6 @@ public class Robot extends TimedRobot {
     /** This function is called periodically during operator control. */
     @Override
     public void teleopPeriodic() {
-
-        // intakeSpeed = SmartDashboard.getNumber("Intake Speed", .5);
-        // shooterSpeed = SmartDashboard.getNumber("Shooter Speed", 1);
-
-        // Intake and shooter controls
-
-
-        if (mXboxOperator.getLeftBumper()) {
-            kIntake.shootRing(.25);
-        } else {
-            kIntake.stopShooter();
-        }
 
         // Arm Controls
         boolean armControl = SmartDashboard.getBoolean("Arm Manual Control", false);

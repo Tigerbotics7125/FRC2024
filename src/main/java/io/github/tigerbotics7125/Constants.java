@@ -38,4 +38,20 @@ public final class Constants {
         public static final double kFeedSpeed = 1D;
         public static final double kMaxOutakeSpeed = -0.25;
     }
+
+    public static final class Shooter {
+        public static final MotorType kMotorType = MotorType.kBrushless;
+        public static final int kLeftID = 6;
+        public static final int kRightID = 7;
+
+        public static final boolean kInverted = true;
+
+        public static final double kP = 0.0004;
+        public static final double kI = 0;
+        public static final double kD = 0;
+        public static final double kFF = 0.00017;
+        public static final double kPIDTolerance = 300; // rpm
+
+        public static final double kShootRPM = 5700;
+    }
 }
