@@ -70,21 +70,20 @@ public class Shooter extends SubsystemBase {
     }
 
     public Command pidControl() {
-        return run(() -> {
-            double pidContribution = 12D * m_PID.calculate(m_encoder.getVelocity());
-            m_left.setVoltage(pidContribution + Constants.Shooter.kFF);
-        });
+        return run(
+                () -> {
+                    double pidContribution = 12D * m_PID.calculate(m_encoder.getVelocity());
+                    m_left.setVoltage(pidContribution + Constants.Shooter.kFF);
+                });
     }
 
     /**
-     * TODO seth: create a method to keep the shooter at a constant but slightly
-     * less velocity than our shooter velocity. This should be the new default method.
-     * Eventually this should consider our distance from the speaker so that it automatically
-     * ramps up to shooting speed when we get closer. Not entirely relevant but also should look
-     * into using the InterpolatingMap or whatever its called, and some data we can create to find values
-     * for shooting from a distance.
+     * TODO seth: create a method to keep the shooter at a constant but slightly less velocity than
+     * our shooter velocity. This should be the new default method. Eventually this should consider
+     * our distance from the speaker so that it automatically ramps up to shooting speed when we get
+     * closer. Not entirely relevant but also should look into using the InterpolatingMap or
+     * whatever its called, and some data we can create to find values for shooting from a distance.
      */
-
     @Override
     public void periodic() {}
 }
