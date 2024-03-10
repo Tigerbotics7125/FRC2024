@@ -46,13 +46,8 @@ public class Robot extends TimedRobot {
     String autonomousSelect;
     SendableChooser<String> m_chooserAutonomous = new SendableChooser<>();
 
-    /**
-     * This function is run when the robot is first started up and should be used for any
-     * initialization code.
-     */
     @Override
     public void robotInit() {
-        // Configure the trigger bindings
 
         m_driveControlChooser.setDefaultOption(
                 ControlType.CURVE_ROCKETLEAGUE.name(), ControlType.CURVE_ROCKETLEAGUE);
@@ -157,7 +152,6 @@ public class Robot extends TimedRobot {
         CommandScheduler.getInstance().cancelAll();
     }
 
-    /** This function is called periodically during operator control. */
     @Override
     public void teleopPeriodic() {}
 
