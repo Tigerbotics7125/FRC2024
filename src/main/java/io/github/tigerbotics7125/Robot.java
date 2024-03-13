@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import io.github.tigerbotics7125.Constants.Arm.ArmState;
 import io.github.tigerbotics7125.Constants.DriveTrain.ControlType;
+import io.github.tigerbotics7125.autos.*;
 import io.github.tigerbotics7125.subsystems.Arm;
 import io.github.tigerbotics7125.subsystems.Drivetrain;
 import io.github.tigerbotics7125.subsystems.Intake;
@@ -32,19 +33,19 @@ public class Robot extends TimedRobot {
     private Shooter m_shooter = new Shooter();
     private Arm m_arm = new Arm();
 
-    double autonomousDistance = 50;
-    double turnDistance = 21.991148;
-    double wheelCircumference = 6 * Math.PI;
+    SendableChooser<Auto> m_autoChooser = new SendableChooser<>();
 
-    TimedAutonomous mTimedAutonomous;
+    { // instance initializer, look it up.
+        m_autoChooser.setDefaultOption("No Auto", new NoAuto());
+        m_autoChooser.addOption("Left shoot then drive", new LeftShootThenDrive(m_drivetrain, m_arm, m_intake, m_shooter));
+        m_autoChooser.addOption("Right shoot then drive",
+                new RightShootThenDrive(m_drivetrain, m_arm, m_intake, m_shooter));
+        m_autoChooser.addOption("Shoot no drive", new ShootNoteNoDrive(m_arm, m_intake, m_shooter));
+        SmartDashboard.putData(m_autoChooser);
+    }
 
     SendableChooser<Constants.DriveTrain.ControlType> m_driveControlChooser =
             new SendableChooser<>();
-    String autonomous1 = "Autonomous Left";
-    String autonomous2 = "Autonomous Right";
-    String shootOnlyAuto = "Shoot Only";
-    String autonomousSelect;
-    SendableChooser<String> m_chooserAutonomous = new SendableChooser<>();
 
     @Override
     public void robotInit() {
@@ -116,10 +117,6 @@ public class Robot extends TimedRobot {
         // TODO tell seth this is different.
         m_operator.leftStick().onTrue(m_arm.resetEncoder());
 
-        m_chooserAutonomous.setDefaultOption("Autonomous 1", autonomous1);
-        m_chooserAutonomous.addOption("Autonomous 2", autonomous2);
-        m_chooserAutonomous.addOption("Shoot Only", shootOnlyAuto);
-        SmartDashboard.putData("Autonomous", m_chooserAutonomous);
         CameraServer.startAutomaticCapture();
     }
 
@@ -127,7 +124,6 @@ public class Robot extends TimedRobot {
     public void robotPeriodic() {
         CommandScheduler.getInstance().run();
 
-        autonomousSelect = m_chooserAutonomous.getSelected();
         SmartDashboard.putData("/DT/ControlType", m_driveControlChooser);
     }
 
@@ -139,7 +135,19 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousInit() {
-        mTimedAutonomous = new TimedAutonomous();
+        Auto auto = m_autoChooser.getSelected();
+
+        auto.autoCommand()
+                .ifPresentOrElse(
+                        cmd ->
+                                CommandScheduler.getInstance()
+                                        .schedule(
+                                                auto.preCommand()
+                                                        .andThen(cmd)
+                                                        .andThen(auto.postCommand())),
+                        () ->
+                                CommandScheduler.getInstance()
+                                        .schedule(Commands.print("PATH PLANNER NOT IMPLEMENTED")));
     }
 
     @Override

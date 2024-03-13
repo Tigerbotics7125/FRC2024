@@ -12,6 +12,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import io.github.tigerbotics7125.Constants;
 import io.github.tigerbotics7125.Constants.Arm.ArmState;
 
@@ -62,6 +63,10 @@ public class Arm extends SubsystemBase {
 
     public Command resetEncoder() {
         return runOnce(() -> m_encoder.setPosition(0));
+    }
+
+    public Trigger atState() {
+        return new Trigger(m_PID::atSetpoint);
     }
 
     @Override
