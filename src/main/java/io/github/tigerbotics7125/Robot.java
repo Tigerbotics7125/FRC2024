@@ -37,8 +37,11 @@ public class Robot extends TimedRobot {
 
     { // instance initializer, look it up.
         m_autoChooser.setDefaultOption("No Auto", new NoAuto());
-        m_autoChooser.addOption("Left shoot then drive", new LeftShootThenDrive(m_drivetrain, m_arm, m_intake, m_shooter));
-        m_autoChooser.addOption("Right shoot then drive",
+        m_autoChooser.addOption(
+                "Left shoot then drive",
+                new LeftShootThenDrive(m_drivetrain, m_arm, m_intake, m_shooter));
+        m_autoChooser.addOption(
+                "Right shoot then drive",
                 new RightShootThenDrive(m_drivetrain, m_arm, m_intake, m_shooter));
         m_autoChooser.addOption("Shoot no drive", new ShootNoteNoDrive(m_arm, m_intake, m_shooter));
         SmartDashboard.putData(m_autoChooser);
