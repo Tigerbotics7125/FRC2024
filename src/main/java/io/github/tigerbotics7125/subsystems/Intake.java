@@ -26,7 +26,7 @@ public class Intake extends SubsystemBase {
         motor.restoreFactoryDefaults();
         Timer.delay(.02);
 
-        // TODO motor configs, we need to do this but we can later.
+        motor.setSmartCurrentLimit(Constants.Intake.kCurrentLimit);
 
         m_intake.setInverted(Constants.Intake.kInverted);
 

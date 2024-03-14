@@ -33,7 +33,7 @@ public class Shooter extends SubsystemBase {
         configureMotor(m_left);
         configureMotor(m_right);
 
-        m_left.setInverted(Constants.Shooter.kInverted);
+        m_left.setInverted(Constants.Shooter.kInvertedFollower);
         m_right.follow(m_left);
 
         m_PID.setTolerance(0, Constants.Shooter.kPIDTolerance);
@@ -43,7 +43,7 @@ public class Shooter extends SubsystemBase {
         motor.restoreFactoryDefaults();
         Timer.delay(.02);
 
-        // TODO motor configs, we need to do this but we can later.
+        motor.setSmartCurrentLimit(Constants.Shooter.kCurrentLimit);
 
         motor.burnFlash();
         Timer.delay(.02);

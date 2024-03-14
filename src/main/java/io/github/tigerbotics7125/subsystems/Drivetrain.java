@@ -43,7 +43,7 @@ public class Drivetrain extends SubsystemBase {
         motor.restoreFactoryDefaults();
         Timer.delay(.02);
 
-        // TODO motor configs, we need to do this but we can later.
+        motor.setSmartCurrentLimit(Constants.DriveTrain.kCurrentLimit);
 
         motor.burnFlash();
         Timer.delay(.02);

@@ -105,15 +105,16 @@ public class Robot extends TimedRobot {
 
         m_intake.setDefaultCommand(m_intake.disable());
         m_shooter.setDefaultCommand(m_shooter.pidControl());
-        m_arm.setDefaultCommand(m_arm.pidControl());
+        m_arm.setDefaultCommand(m_arm.disable());
 
         m_operator.rightBumper().onTrue(m_intake.intake());
         m_operator.rightBumper().onFalse(m_intake.outtake(m_operator::getRightTriggerAxis));
         m_operator.leftBumper().onTrue(m_shooter.shootNote(m_intake));
         m_operator.leftBumper().onFalse(m_shooter.disable());
-        m_operator.y().onTrue(m_arm.setState(ArmState.SPEAKER));
-        m_operator.x().onTrue(m_arm.setState(ArmState.AMP));
-        m_operator.b().onTrue(m_arm.setState(ArmState.INTAKE));
+        m_operator.y().onTrue(m_arm.pidControl(ArmState.SPEAKER));
+        m_operator.x().onTrue(m_arm.pidControl(ArmState.AMP));
+        m_operator.b().onTrue(m_arm.pidControl(ArmState.INTAKE));
+        m_operator.a().onTrue(m_arm.disable());
         // TODO tell seth this is different.
         m_operator.leftStick().onTrue(m_arm.resetEncoder());
 

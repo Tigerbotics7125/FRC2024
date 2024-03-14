@@ -24,6 +24,9 @@ public final class Constants {
         }
 
         public static final MotorType kMotorType = MotorType.kBrushed;
+
+        public static final int kCurrentLimit = 60;
+
         public static final int kFrontLeftID = 1;
         public static final int kFrontRightID = 2;
         public static final int kBackLeftID = 3;
@@ -33,6 +36,8 @@ public final class Constants {
     public static final class Intake {
         public static final MotorType kMotorType = MotorType.kBrushless;
         public static final int kIntakeID = 5;
+
+        public static final int kCurrentLimit = 25;
 
         public static final boolean kInverted = false;
 
@@ -46,7 +51,9 @@ public final class Constants {
         public static final int kLeftID = 6;
         public static final int kRightID = 7;
 
-        public static final boolean kInverted = true;
+        public static final int kCurrentLimit = 90;
+
+        public static final boolean kInvertedFollower = true;
 
         public static final double kP = 0.0004;
         public static final double kI = 0;
@@ -62,6 +69,8 @@ public final class Constants {
         public static final int kLeftID = 8;
         public static final int kRightID = 9;
 
+        public static final int kCurrentLimit = 50;
+
         public static final boolean kFollowerInverted = true;
 
         public static final double kP = .04;
@@ -73,6 +82,12 @@ public final class Constants {
         public static final double kG = 0;
         public static final double kV = 0;
         public static final ArmFeedforward kFF = new ArmFeedforward(kS, kG, kV);
+
+        public static final double kGearRatio = 1D / 48D;
+        public static final double kChainRatio = 10D / 60D;
+
+        public static final double kPositionConversionFactor = kGearRatio * kChainRatio;
+        public static final double kVelocityConversionFactor = kPositionConversionFactor / 60D;
 
         public enum ArmState {
             AMP(0D),
