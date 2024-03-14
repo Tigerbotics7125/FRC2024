@@ -27,10 +27,11 @@ public class ShootNoteNoDrive implements Auto {
 
     @Override
     public Optional<Command> autoCommand() {
-        Command cmd = Commands.sequence(
-                        m_arm.pidControl(ArmState.SPEAKERAUTO).until(m_arm.atState()),
-                        m_shooter.shootNote(m_intake))
-                .withTimeout(5);
+        Command cmd =
+                Commands.sequence(
+                                m_arm.pidControl(ArmState.SPEAKERAUTO).until(m_arm.atState()),
+                                m_shooter.shootNote(m_intake))
+                        .withTimeout(5);
 
         return Optional.of(cmd);
     }

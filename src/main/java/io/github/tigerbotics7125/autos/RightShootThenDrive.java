@@ -34,8 +34,8 @@ public class RightShootThenDrive implements Auto {
                 // Lower arm, then shoot note.
                 // TODO arm.atState doesn't have a tolerance, may never return true atm.
                 Commands.sequence(
-                        m_arm.pidControl(ArmState.SPEAKERAUTO).until(m_arm.atState()),
-                        m_shooter.shootNote(m_intake))
+                                m_arm.pidControl(ArmState.SPEAKERAUTO).until(m_arm.atState()),
+                                m_shooter.shootNote(m_intake))
                         .withTimeout(5)
                         // Drive backwards for 1 second.
                         .andThen(
