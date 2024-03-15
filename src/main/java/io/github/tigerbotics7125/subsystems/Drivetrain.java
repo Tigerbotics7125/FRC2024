@@ -38,8 +38,8 @@ public class Drivetrain extends SubsystemBase {
     private DifferentialDriveOdometry m_odometry =
             new DifferentialDriveOdometry(
                     m_gyro.getRotation2d(),
-                    m_leftEncoder.getSelectedSensorPosition(),
-                    m_rightEncoder.getSelectedSensorPosition());
+                    getLeftPositionMeters(),
+                    getRightPositionMeters());
 
     public Drivetrain() {
         configureMotor(frontLeft);
@@ -98,8 +98,8 @@ public class Drivetrain extends SubsystemBase {
     public void resetOdometry(Rotation2d heading, Pose2d pose) {
         m_odometry.resetPosition(
                 heading,
-                m_leftEncoder.getSelectedSensorPosition(),
-                m_rightEncoder.getSelectedSensorPosition(),
+                getLeftPositionMeters(),
+                getRightPositionMeters(),
                 pose);
     }
 
@@ -109,12 +109,28 @@ public class Drivetrain extends SubsystemBase {
 
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("/DT/Left", frontLeft.get());
-        SmartDashboard.putNumber("/DT/Right", frontRight.get());
+            SmartDashboard.putNumber("/DT/Left", frontLeft.get());
+            SmartDashboard.putNumber("/DT/Right", frontRight.get());
 
-        m_odometry.update(
-                m_gyro.getRotation2d(),
-                m_leftEncoder.getSelectedSensorPosition(),
-                m_rightEncoder.getSelectedSensorPosition());
+            m_odometry.update(
+                            m_gyro.getRotation2d(),
+                            m_leftEncoder.getSelectedSensorPosition(),
+                            m_rightEncoder.getSelectedSensorPosition());
+    }
+
+    private double getLeftPositionMeters() {
+            return m_leftEncoder.getSelectedSensorPosition() * Constants.DriveTrain.kPositionConversionFactor;
+    }
+
+    private double getRightPositionMeters() {
+            return m_rightEncoder.getSelectedSensorPosition() * Constants.DriveTrain.kPositionConversionFactor;
+    }
+
+    private double getLeftVelocityMetersPerSecond() {
+            return m_leftEncoder.getSelectedSensorVelocity() * Constants.DriveTrain.kVelocityConversionFactor;
+    }
+
+    private double getRightVelocityMetersPerSecond() {
+            return m_rightEncoder.getSelectedSensorVelocity() * Constants.DriveTrain.kVelocityConversionFactor;
     }
 }

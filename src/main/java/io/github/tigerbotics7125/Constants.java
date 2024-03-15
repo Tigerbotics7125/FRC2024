@@ -8,6 +8,7 @@ package io.github.tigerbotics7125;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.util.Units;
 
 public final class Constants {
     public static final class HID {
@@ -31,6 +32,13 @@ public final class Constants {
         public static final int kFrontRightID = 2;
         public static final int kBackLeftID = 3;
         public static final int kBackRightID = 4;
+
+        // 1 unit * 1 revolution * 2 * pi * 3 in (radius) meters = linear wheel distance in meters
+        //          4096 units     1 revolution
+        public static final double kPositionConversionFactor = 1D / 4096D * 2D * Math.PI * Units.inchesToMeters(3D);
+        // 1 unit * 1000 ms * kPositionConversionFactor = linear wheel distance in meters per second.
+        // 100 ms   1 sec
+        public static final double kVelocityConversionFactor = 1D / 100D * 1000D * kPositionConversionFactor;
     }
 
     public static final class Intake {
