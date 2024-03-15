@@ -8,7 +8,6 @@ package io.github.tigerbotics7125.subsystems;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkMax;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
@@ -35,7 +34,11 @@ public class Drivetrain extends SubsystemBase {
     private WPI_TalonSRX leftEncoder = new WPI_TalonSRX(1);
     private WPI_TalonSRX rightEncoder = new WPI_TalonSRX(2);
     private AHRS m_gyro = new AHRS(SerialPort.Port.kMXP);
-    private DifferentialDriveOdometry m_odometry = new DifferentialDriveOdometry(m_gyro.getRotation2d(), leftEncoder.getSelectedSensorPosition(), rightEncoder.getSelectedSensorPosition());
+    private DifferentialDriveOdometry m_odometry =
+            new DifferentialDriveOdometry(
+                    m_gyro.getRotation2d(),
+                    leftEncoder.getSelectedSensorPosition(),
+                    rightEncoder.getSelectedSensorPosition());
 
     public Drivetrain() {
         configureMotor(frontLeft);
@@ -75,26 +78,29 @@ public class Drivetrain extends SubsystemBase {
     }
 
     public Command curvatureDrive(
-                    DoubleSupplier xSpeed, DoubleSupplier zRotation, BooleanSupplier allowTurnInPlace) {
-            return run(
-                            () -> {
-                                    WheelSpeeds ws = DifferentialDrive.curvatureDriveIK(
-                                                    xSpeed.getAsDouble(),
-                                                    zRotation.getAsDouble(),
-                                                    allowTurnInPlace.getAsBoolean());
-                                    frontLeft.set(ws.left);
-                                    frontRight.set(ws.right);
-                            });
+            DoubleSupplier xSpeed, DoubleSupplier zRotation, BooleanSupplier allowTurnInPlace) {
+        return run(
+                () -> {
+                    WheelSpeeds ws =
+                            DifferentialDrive.curvatureDriveIK(
+                                    xSpeed.getAsDouble(),
+                                    zRotation.getAsDouble(),
+                                    allowTurnInPlace.getAsBoolean());
+                    frontLeft.set(ws.left);
+                    frontRight.set(ws.right);
+                });
     }
 
     public void resetOdometry(Rotation2d heading, Pose2d pose) {
-            m_odometry.resetPosition(heading, leftEncoder.getSelectedSensorPosition(),
-                            rightEncoder.getSelectedSensorPosition(), pose);
-
+        m_odometry.resetPosition(
+                heading,
+                leftEncoder.getSelectedSensorPosition(),
+                rightEncoder.getSelectedSensorPosition(),
+                pose);
     }
 
     public void resetGyro() {
-            m_gyro.reset();
+        m_gyro.reset();
     }
 
     @Override
@@ -103,9 +109,8 @@ public class Drivetrain extends SubsystemBase {
         SmartDashboard.putNumber("/DT/Right", frontRight.get());
 
         m_odometry.update(
-                        m_gyro.getRotation2d(),
-                        leftEncoder.getSelectedSensorPosition(),
-                        rightEncoder.getSelectedSensorPosition()
-                        );
+                m_gyro.getRotation2d(),
+                leftEncoder.getSelectedSensorPosition(),
+                rightEncoder.getSelectedSensorPosition());
     }
 }
