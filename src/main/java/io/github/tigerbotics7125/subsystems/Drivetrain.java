@@ -5,6 +5,7 @@
  */
 package io.github.tigerbotics7125.subsystems;
 
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkMax;
@@ -31,20 +32,23 @@ public class Drivetrain extends SubsystemBase {
             new CANSparkMax(Constants.DriveTrain.kBackLeftID, Constants.DriveTrain.kMotorType);
     private CANSparkMax backRight =
             new CANSparkMax(Constants.DriveTrain.kBackRightID, Constants.DriveTrain.kMotorType);
-    private WPI_TalonSRX leftEncoder = new WPI_TalonSRX(1);
-    private WPI_TalonSRX rightEncoder = new WPI_TalonSRX(2);
+    private WPI_TalonSRX m_leftEncoder = new WPI_TalonSRX(1);
+    private WPI_TalonSRX m_rightEncoder = new WPI_TalonSRX(2);
     private AHRS m_gyro = new AHRS(SerialPort.Port.kMXP);
     private DifferentialDriveOdometry m_odometry =
             new DifferentialDriveOdometry(
                     m_gyro.getRotation2d(),
-                    leftEncoder.getSelectedSensorPosition(),
-                    rightEncoder.getSelectedSensorPosition());
+                    m_leftEncoder.getSelectedSensorPosition(),
+                    m_rightEncoder.getSelectedSensorPosition());
 
     public Drivetrain() {
         configureMotor(frontLeft);
         configureMotor(frontRight);
         configureMotor(backLeft);
         configureMotor(backRight);
+
+        m_leftEncoder.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
+        m_rightEncoder.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
 
         backLeft.follow(frontLeft);
         backRight.follow(frontRight);
@@ -94,8 +98,8 @@ public class Drivetrain extends SubsystemBase {
     public void resetOdometry(Rotation2d heading, Pose2d pose) {
         m_odometry.resetPosition(
                 heading,
-                leftEncoder.getSelectedSensorPosition(),
-                rightEncoder.getSelectedSensorPosition(),
+                m_leftEncoder.getSelectedSensorPosition(),
+                m_rightEncoder.getSelectedSensorPosition(),
                 pose);
     }
 
@@ -110,7 +114,7 @@ public class Drivetrain extends SubsystemBase {
 
         m_odometry.update(
                 m_gyro.getRotation2d(),
-                leftEncoder.getSelectedSensorPosition(),
-                rightEncoder.getSelectedSensorPosition());
+                m_leftEncoder.getSelectedSensorPosition(),
+                m_rightEncoder.getSelectedSensorPosition());
     }
 }
