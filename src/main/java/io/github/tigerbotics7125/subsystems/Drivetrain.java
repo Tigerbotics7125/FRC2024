@@ -6,7 +6,14 @@
 package io.github.tigerbotics7125.subsystems;
 
 import com.revrobotics.CANSparkBase.IdleMode;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkMax;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
+import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive.WheelSpeeds;
@@ -26,12 +33,23 @@ public class Drivetrain extends SubsystemBase {
             new CANSparkMax(Constants.DriveTrain.kBackLeftID, Constants.DriveTrain.kMotorType);
     private CANSparkMax backRight =
             new CANSparkMax(Constants.DriveTrain.kBackRightID, Constants.DriveTrain.kMotorType);
+    private WPI_TalonSRX m_leftEncoder = new WPI_TalonSRX(1);
+    private WPI_TalonSRX m_rightEncoder = new WPI_TalonSRX(2);
+    private AHRS m_gyro = new AHRS(SerialPort.Port.kMXP);
+    private DifferentialDriveOdometry m_odometry =
+            new DifferentialDriveOdometry(
+                    m_gyro.getRotation2d(),
+                    getLeftPositionMeters(),
+                    getRightPositionMeters());
 
     public Drivetrain() {
         configureMotor(frontLeft);
         configureMotor(frontRight);
         configureMotor(backLeft);
         configureMotor(backRight);
+
+        m_leftEncoder.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
+        m_rightEncoder.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
 
         backLeft.follow(frontLeft);
         backRight.follow(frontRight);
@@ -91,7 +109,28 @@ public class Drivetrain extends SubsystemBase {
 
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("/DT/Left", frontLeft.get());
-        SmartDashboard.putNumber("/DT/Right", frontRight.get());
+            SmartDashboard.putNumber("/DT/Left", frontLeft.get());
+            SmartDashboard.putNumber("/DT/Right", frontRight.get());
+
+            m_odometry.update(
+                            m_gyro.getRotation2d(),
+                            m_leftEncoder.getSelectedSensorPosition(),
+                            m_rightEncoder.getSelectedSensorPosition());
+    }
+
+    private double getLeftPositionMeters() {
+            return m_leftEncoder.getSelectedSensorPosition() * Constants.DriveTrain.kPositionConversionFactor;
+    }
+
+    private double getRightPositionMeters() {
+            return m_rightEncoder.getSelectedSensorPosition() * Constants.DriveTrain.kPositionConversionFactor;
+    }
+
+    private double getLeftVelocityMetersPerSecond() {
+            return m_leftEncoder.getSelectedSensorVelocity() * Constants.DriveTrain.kVelocityConversionFactor;
+    }
+
+    private double getRightVelocityMetersPerSecond() {
+            return m_rightEncoder.getSelectedSensorVelocity() * Constants.DriveTrain.kVelocityConversionFactor;
     }
 }
