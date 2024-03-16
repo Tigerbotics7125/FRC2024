@@ -39,16 +39,14 @@ public class Robot extends TimedRobot {
 
     SendableChooser<PathPlannerAuto> m_autoChooser = new SendableChooser<>();
 
-    { // instance initializer, look it up.
-        m_autoChooser.setDefaultOption("Example", new PathPlannerAuto("Example"));
-    }
+   
 
     SendableChooser<Constants.DriveTrain.ControlType> m_driveControlChooser =
             new SendableChooser<>();
 
     @Override
     public void robotInit() {
-
+         m_autoChooser.setDefaultOption("Example", new PathPlannerAuto("Example Path"));
         m_driveControlChooser.setDefaultOption(
                 ControlType.CURVE_ROCKETLEAGUE.name(), ControlType.CURVE_ROCKETLEAGUE);
         for (ControlType controlType : ControlType.values()) {
