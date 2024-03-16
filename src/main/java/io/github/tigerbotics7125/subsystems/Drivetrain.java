@@ -5,6 +5,7 @@
  */
 package io.github.tigerbotics7125.subsystems;
 
+import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkMax;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -44,9 +45,10 @@ public class Drivetrain extends SubsystemBase {
         Timer.delay(.02);
 
         motor.setSmartCurrentLimit(Constants.DriveTrain.kCurrentLimit);
-
+        motor.setIdleMode(IdleMode.kCoast);
         motor.burnFlash();
         Timer.delay(.02);
+
     }
 
     public Command arcadeDrive(
@@ -64,17 +66,26 @@ public class Drivetrain extends SubsystemBase {
     }
 
     public Command curvatureDrive(
-            DoubleSupplier xSpeed, DoubleSupplier zRotation, BooleanSupplier allowTurnInPlace) {
-        return run(
-                () -> {
-                    WheelSpeeds ws =
-                            DifferentialDrive.curvatureDriveIK(
-                                    xSpeed.getAsDouble(),
-                                    zRotation.getAsDouble(),
-                                    allowTurnInPlace.getAsBoolean());
-                    frontLeft.set(ws.left);
-                    frontRight.set(ws.right);
-                });
+                    DoubleSupplier xSpeed, DoubleSupplier zRotation, BooleanSupplier allowTurnInPlace) {
+            return run(
+                            () -> {
+                                    WheelSpeeds ws = DifferentialDrive.curvatureDriveIK(
+                                                    xSpeed.getAsDouble(),
+                                                    zRotation.getAsDouble(),
+                                                    allowTurnInPlace.getAsBoolean());
+                                    frontLeft.set(ws.left);
+                                    frontRight.set(ws.right);
+                            });
+    }
+     public Command setIdleMode(IdleMode idleMode) {
+        return runOnce(()->{
+            frontLeft.setIdleMode(idleMode);
+            frontRight.setIdleMode(idleMode);
+            backLeft.setIdleMode(idleMode);
+            backRight.setIdleMode(idleMode);
+        }).ignoringDisable(true);
+
+
     }
 
     @Override
