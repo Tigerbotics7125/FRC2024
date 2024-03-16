@@ -5,12 +5,25 @@
  */
 package io.github.tigerbotics7125.subsystems;
 
+import java.util.function.BooleanSupplier;
+import java.util.function.DoubleSupplier;
+
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.kauailabs.navx.frc.AHRS;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.util.ReplanningConfig;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkMax;
+
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
+import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -19,8 +32,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import io.github.tigerbotics7125.Constants;
-import java.util.function.BooleanSupplier;
-import java.util.function.DoubleSupplier;
 
 public class Drivetrain extends SubsystemBase {
     private CANSparkMax frontLeft =
@@ -36,7 +47,12 @@ public class Drivetrain extends SubsystemBase {
     private AHRS m_gyro = new AHRS(SerialPort.Port.kMXP);
     private DifferentialDriveOdometry m_odometry =
             new DifferentialDriveOdometry(
-                    m_gyro.getRotation2d(), getLeftPositionMeters(), getRightPositionMeters());
+                                    m_gyro.getRotation2d(), getLeftPositionMeters(), getRightPositionMeters());
+    private DifferentialDriveKinematics m_kinematics = new DifferentialDriveKinematics(Units.inchesToMeters(21));
+    private PIDController m_leftPID = new PIDController(1, 0, 0);
+    private PIDController m_rightPID = new PIDController(1, 0, 0);
+
+
 
     public Drivetrain() {
         configureMotor(frontLeft);
@@ -52,6 +68,26 @@ public class Drivetrain extends SubsystemBase {
 
         frontRight.setInverted(true);
         // No need to tell backRight to invert, it's a follower.
+
+        AutoBuilder.configureRamsete(
+            this::getPose, // Robot pose supplier
+            this::resetPose, // Method to reset odometry (will be called if your auto has a starting pose)
+            this::getCurrentSpeeds, // Current ChassisSpeeds supplier
+            this::driveRelative, // Method that will drive the robot given ChassisSpeeds
+            new ReplanningConfig(), // Default path replanning config. See the API for the options here
+            () -> {
+              // Boolean supplier that controls when the path will be mirrored for the red alliance
+              // This will flip the path being followed to the red side of the field.
+              // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+
+              var alliance = DriverStation.getAlliance();
+              if (alliance.isPresent()) {
+                return alliance.get() == DriverStation.Alliance.Red;
+              }
+              return false;
+            },
+            this // Reference to this subsystem to set requirements
+    );
     }
 
     private void configureMotor(CANSparkMax motor) {
@@ -130,7 +166,29 @@ public class Drivetrain extends SubsystemBase {
     }
 
     private double getRightVelocityMetersPerSecond() {
-        return m_rightEncoder.getSelectedSensorVelocity()
-                * Constants.DriveTrain.kVelocityConversionFactor;
+            return m_rightEncoder.getSelectedSensorVelocity()
+                            * Constants.DriveTrain.kVelocityConversionFactor;
+    }
+
+    private Pose2d getPose() {
+            return m_odometry.getPoseMeters();
+    }
+
+    private void resetPose(Pose2d pose) {
+            m_odometry.resetPosition(m_gyro.getRotation2d(), getLeftPositionMeters(), getRightPositionMeters(), pose);
+    }
+
+    private ChassisSpeeds getCurrentSpeeds() {
+            return m_kinematics.toChassisSpeeds(new DifferentialDriveWheelSpeeds(getLeftVelocityMetersPerSecond(),
+                            getRightVelocityMetersPerSecond()));
+    }
+
+    private void driveRelative(ChassisSpeeds chassisSpeeds) {
+            DifferentialDriveWheelSpeeds ws = m_kinematics.toWheelSpeeds(chassisSpeeds);
+
+            m_leftPID.setSetpoint(ws.leftMetersPerSecond);
+            m_rightPID.setSetpoint(ws.rightMetersPerSecond);
+            frontLeft.set(m_leftPID.calculate(getLeftVelocityMetersPerSecond()));
+            frontRight.set(m_rightPID.calculate(getRightVelocityMetersPerSecond()));
     }
 }
