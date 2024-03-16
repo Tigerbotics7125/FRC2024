@@ -7,9 +7,13 @@ package io.github.tigerbotics7125.subsystems;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.CANSparkBase.IdleMode;
+
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.spline.SplineParameterizer.MalformedSplineException;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -37,6 +41,10 @@ public class Arm extends SubsystemBase {
         configureMotor(m_left);
         configureMotor(m_right);
         m_right.follow(m_left, Constants.Arm.kFollowerInverted);
+
+        m_encoder.setPositionConversionFactor(Constants.Arm.kPositionConversionFactor);
+        m_encoder.setVelocityConversionFactor(Constants.Arm.kVelocityConversionFactor);
+        m_encoder.setPosition(0);
     }
 
     private void configureMotor(CANSparkMax motor) {
@@ -44,7 +52,7 @@ public class Arm extends SubsystemBase {
         Timer.delay(.02);
 
         motor.setSmartCurrentLimit(Constants.Arm.kCurrentLimit);
-
+        motor.setIdleMode(IdleMode.kCoast);
         motor.burnFlash();
         Timer.delay(.02);
     }
@@ -57,16 +65,16 @@ public class Arm extends SubsystemBase {
         return run(() -> m_left.setVoltage(input.getAsDouble()));
     }
 
-    public Command pidControl(ArmState state) {
+     public Command pidControl(ArmState state) {
         return runOnce(() -> m_PID.setSetpoint(state.kPosition))
                 .andThen(
                         run(
                                 () -> {
                                     double pidContribution =
                                             12D * m_PID.calculate(m_encoder.getPosition());
-                                    double ffContribution =
-                                            m_feedforward.calculate(m_PID.getSetpoint(), 0);
-                                    m_left.setVoltage(pidContribution + ffContribution);
+                                    // double ffContribution =
+                                    //         m_feedforward.calculate(m_PID.getSetpoint(), 0);
+                                    m_left.setVoltage(pidContribution); //+ ffContribution);
                                 }));
     }
 
@@ -82,10 +90,21 @@ public class Arm extends SubsystemBase {
         return Commands.none();
     }
 
+    public Command setIdleMode(IdleMode idleMode) {
+        return runOnce(()->{
+            m_left.setIdleMode(idleMode);
+            m_right.setIdleMode(idleMode);
+        }).ignoringDisable(true);
+
+
+    }
+
     public Trigger atState() {
         return new Trigger(m_PID::atSetpoint);
     }
 
     @Override
-    public void periodic() {}
+    public void periodic() {
+        SmartDashboard.putNumber("arm", m_encoder.getPosition());
+    }
 }
