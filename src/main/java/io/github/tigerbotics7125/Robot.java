@@ -5,13 +5,16 @@
  */
 package io.github.tigerbotics7125;
 
+import com.revrobotics.CANSparkBase.IdleMode;
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import io.github.tigerbotics7125.Constants.Arm.ArmState;
 import io.github.tigerbotics7125.Constants.DriveTrain.ControlType;
 import io.github.tigerbotics7125.autos.*;
@@ -59,7 +62,11 @@ public class Robot extends TimedRobot {
             if (controlType.equals(ControlType.CURVE_ROCKETLEAGUE)) continue;
             m_driveControlChooser.addOption(controlType.name(), controlType);
         }
-
+        new Trigger(RobotController::getUserButton)
+                .onTrue(
+                        m_drivetrain
+                                .setIdleMode(IdleMode.kBrake)
+                                .andThen(m_arm.setIdleMode(IdleMode.kBrake)));
         m_drivetrain.setDefaultCommand(
                 Commands.select(
                         Map.of(
