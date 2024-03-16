@@ -48,7 +48,6 @@ public class Drivetrain extends SubsystemBase {
         motor.setIdleMode(IdleMode.kCoast);
         motor.burnFlash();
         Timer.delay(.02);
-
     }
 
     public Command arcadeDrive(
@@ -66,26 +65,28 @@ public class Drivetrain extends SubsystemBase {
     }
 
     public Command curvatureDrive(
-                    DoubleSupplier xSpeed, DoubleSupplier zRotation, BooleanSupplier allowTurnInPlace) {
-            return run(
-                            () -> {
-                                    WheelSpeeds ws = DifferentialDrive.curvatureDriveIK(
-                                                    xSpeed.getAsDouble(),
-                                                    zRotation.getAsDouble(),
-                                                    allowTurnInPlace.getAsBoolean());
-                                    frontLeft.set(ws.left);
-                                    frontRight.set(ws.right);
-                            });
+            DoubleSupplier xSpeed, DoubleSupplier zRotation, BooleanSupplier allowTurnInPlace) {
+        return run(
+                () -> {
+                    WheelSpeeds ws =
+                            DifferentialDrive.curvatureDriveIK(
+                                    xSpeed.getAsDouble(),
+                                    zRotation.getAsDouble(),
+                                    allowTurnInPlace.getAsBoolean());
+                    frontLeft.set(ws.left);
+                    frontRight.set(ws.right);
+                });
     }
-     public Command setIdleMode(IdleMode idleMode) {
-        return runOnce(()->{
-            frontLeft.setIdleMode(idleMode);
-            frontRight.setIdleMode(idleMode);
-            backLeft.setIdleMode(idleMode);
-            backRight.setIdleMode(idleMode);
-        }).ignoringDisable(true);
 
-
+    public Command setIdleMode(IdleMode idleMode) {
+        return runOnce(
+                        () -> {
+                            frontLeft.setIdleMode(idleMode);
+                            frontRight.setIdleMode(idleMode);
+                            backLeft.setIdleMode(idleMode);
+                            backRight.setIdleMode(idleMode);
+                        })
+                .ignoringDisable(true);
     }
 
     @Override

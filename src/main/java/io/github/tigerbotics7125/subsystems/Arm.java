@@ -5,13 +5,11 @@
  */
 package io.github.tigerbotics7125.subsystems;
 
+import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.CANSparkBase.IdleMode;
-
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.spline.SplineParameterizer.MalformedSplineException;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -65,7 +63,7 @@ public class Arm extends SubsystemBase {
         return run(() -> m_left.setVoltage(input.getAsDouble()));
     }
 
-     public Command pidControl(ArmState state) {
+    public Command pidControl(ArmState state) {
         return runOnce(() -> m_PID.setSetpoint(state.kPosition))
                 .andThen(
                         run(
@@ -74,7 +72,7 @@ public class Arm extends SubsystemBase {
                                             12D * m_PID.calculate(m_encoder.getPosition());
                                     // double ffContribution =
                                     //         m_feedforward.calculate(m_PID.getSetpoint(), 0);
-                                    m_left.setVoltage(pidContribution); //+ ffContribution);
+                                    m_left.setVoltage(pidContribution); // + ffContribution);
                                 }));
     }
 
@@ -91,12 +89,12 @@ public class Arm extends SubsystemBase {
     }
 
     public Command setIdleMode(IdleMode idleMode) {
-        return runOnce(()->{
-            m_left.setIdleMode(idleMode);
-            m_right.setIdleMode(idleMode);
-        }).ignoringDisable(true);
-
-
+        return runOnce(
+                        () -> {
+                            m_left.setIdleMode(idleMode);
+                            m_right.setIdleMode(idleMode);
+                        })
+                .ignoringDisable(true);
     }
 
     public Trigger atState() {

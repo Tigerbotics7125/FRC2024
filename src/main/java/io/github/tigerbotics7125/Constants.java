@@ -75,7 +75,7 @@ public final class Constants {
 
         public static final double kP = .01;
         public static final double kI = 0; // Integral term should be done with FF instead.
-        public static final double kD = 0;//.5;
+        public static final double kD = 0; // .5;
         public static final PIDController kPID = new PIDController(kP, kI, kD);
         // TODO look into sysid to characterize this.
         public static final double kS = 0;
@@ -86,7 +86,7 @@ public final class Constants {
         public static final double kGearRatio = 1D / 48D;
         public static final double kChainRatio = 10D / 60D;
 
-        public static final double kPositionConversionFactor = kGearRatio * kChainRatio*360;
+        public static final double kPositionConversionFactor = kGearRatio * kChainRatio * 360;
         public static final double kVelocityConversionFactor = kPositionConversionFactor / 60D;
 
         public enum ArmState {
