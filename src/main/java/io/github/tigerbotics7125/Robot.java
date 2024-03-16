@@ -5,6 +5,7 @@
  */
 package io.github.tigerbotics7125;
 
+import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.revrobotics.CANSparkBase.IdleMode;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.RobotController;
@@ -36,18 +37,11 @@ public class Robot extends TimedRobot {
     private Shooter m_shooter = new Shooter();
     private Arm m_arm = new Arm();
 
-    SendableChooser<Auto> m_autoChooser = new SendableChooser<>();
+    SendableChooser<PathPlannerAuto> m_autoChooser = new SendableChooser<>();
 
     { // instance initializer, look it up.
-        m_autoChooser.setDefaultOption("No Auto", new NoAuto());
-        m_autoChooser.addOption(
-                "Left shoot then drive",
-                new LeftShootThenDrive(m_drivetrain, m_arm, m_intake, m_shooter));
-        m_autoChooser.addOption(
-                "Right shoot then drive",
-                new RightShootThenDrive(m_drivetrain, m_arm, m_intake, m_shooter));
-        m_autoChooser.addOption("Shoot no drive", new ShootNoteNoDrive(m_arm, m_intake, m_shooter));
-        SmartDashboard.putData(m_autoChooser);
+        m_autoChooser.setDefaultOption("No Auto", new PathPlannerAuto("Example"));
+        
     }
 
     SendableChooser<Constants.DriveTrain.ControlType> m_driveControlChooser =
@@ -135,7 +129,7 @@ public class Robot extends TimedRobot {
     public void robotPeriodic() {
         CommandScheduler.getInstance().run();
 
-        SmartDashboard.putData("/DT/ControlType", m_driveControlChooser);
+        SmartDashboard.putData("DTControlType", m_driveControlChooser);
     }
 
     @Override
@@ -146,19 +140,19 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousInit() {
-        Auto auto = m_autoChooser.getSelected();
+        // Auto auto = m_autoChooser.getSelected();
 
-        auto.autoCommand()
-                .ifPresentOrElse(
-                        cmd ->
-                                CommandScheduler.getInstance()
-                                        .schedule(
-                                                auto.preCommand()
-                                                        .andThen(cmd)
-                                                        .andThen(auto.postCommand())),
-                        () ->
-                                CommandScheduler.getInstance()
-                                        .schedule(Commands.print("PATH PLANNER NOT IMPLEMENTED")));
+        // auto.autoCommand()
+        //         .ifPresentOrElse(
+        //                 cmd ->
+        //                         CommandScheduler.getInstance()
+        //                                 .schedule(
+        //                                         auto.preCommand()
+        //                                                 .andThen(cmd)
+        //                                                 .andThen(auto.postCommand())),
+        //                 () ->
+        //                         CommandScheduler.getInstance()
+        //                                 .schedule(Commands.print("PATH PLANNER NOT IMPLEMENTED")));
     }
 
     @Override
