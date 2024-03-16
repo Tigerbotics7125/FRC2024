@@ -5,6 +5,7 @@
  */
 package io.github.tigerbotics7125.subsystems;
 
+import com.revrobotics.CANSparkBase.IdleMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.kauailabs.navx.frc.AHRS;
@@ -62,7 +63,7 @@ public class Drivetrain extends SubsystemBase {
         Timer.delay(.02);
 
         motor.setSmartCurrentLimit(Constants.DriveTrain.kCurrentLimit);
-
+        motor.setIdleMode(IdleMode.kCoast);
         motor.burnFlash();
         Timer.delay(.02);
     }
@@ -95,16 +96,15 @@ public class Drivetrain extends SubsystemBase {
                 });
     }
 
-    public void resetOdometry(Rotation2d heading, Pose2d pose) {
-        m_odometry.resetPosition(
-                heading,
-                getLeftPositionMeters(),
-                getRightPositionMeters(),
-                pose);
-    }
-
-    public void resetGyro() {
-        m_gyro.reset();
+    public Command setIdleMode(IdleMode idleMode) {
+        return runOnce(
+                        () -> {
+                            frontLeft.setIdleMode(idleMode);
+                            frontRight.setIdleMode(idleMode);
+                            backLeft.setIdleMode(idleMode);
+                            backRight.setIdleMode(idleMode);
+                        })
+                .ignoringDisable(true);
     }
 
     @Override
