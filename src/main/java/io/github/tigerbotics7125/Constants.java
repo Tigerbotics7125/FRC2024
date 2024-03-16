@@ -35,10 +35,13 @@ public final class Constants {
 
         // 1 unit * 1 revolution * 2 * pi * 3 in (radius) meters = linear wheel distance in meters
         //          4096 units     1 revolution
-        public static final double kPositionConversionFactor = 1D / 4096D * 2D * Math.PI * Units.inchesToMeters(3D);
-        // 1 unit * 1000 ms * kPositionConversionFactor = linear wheel distance in meters per second.
+        public static final double kPositionConversionFactor =
+                1D / 4096D * 2D * Math.PI * Units.inchesToMeters(3D);
+        // 1 unit * 1000 ms * kPositionConversionFactor = linear wheel distance in meters per
+        // second.
         // 100 ms   1 sec
-        public static final double kVelocityConversionFactor = 1D / 100D * 1000D * kPositionConversionFactor;
+        public static final double kVelocityConversionFactor =
+                1D / 100D * 1000D * kPositionConversionFactor;
     }
 
     public static final class Intake {

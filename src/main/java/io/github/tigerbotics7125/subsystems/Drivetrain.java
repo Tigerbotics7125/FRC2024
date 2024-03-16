@@ -5,13 +5,11 @@
  */
 package io.github.tigerbotics7125.subsystems;
 
-import com.revrobotics.CANSparkBase.IdleMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.kauailabs.navx.frc.AHRS;
+import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkMax;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.Timer;
@@ -38,9 +36,7 @@ public class Drivetrain extends SubsystemBase {
     private AHRS m_gyro = new AHRS(SerialPort.Port.kMXP);
     private DifferentialDriveOdometry m_odometry =
             new DifferentialDriveOdometry(
-                    m_gyro.getRotation2d(),
-                    getLeftPositionMeters(),
-                    getRightPositionMeters());
+                    m_gyro.getRotation2d(), getLeftPositionMeters(), getRightPositionMeters());
 
     public Drivetrain() {
         configureMotor(frontLeft);
@@ -109,28 +105,32 @@ public class Drivetrain extends SubsystemBase {
 
     @Override
     public void periodic() {
-            SmartDashboard.putNumber("/DT/Left", frontLeft.get());
-            SmartDashboard.putNumber("/DT/Right", frontRight.get());
+        SmartDashboard.putNumber("/DT/Left", frontLeft.get());
+        SmartDashboard.putNumber("/DT/Right", frontRight.get());
 
-            m_odometry.update(
-                            m_gyro.getRotation2d(),
-                            m_leftEncoder.getSelectedSensorPosition(),
-                            m_rightEncoder.getSelectedSensorPosition());
+        m_odometry.update(
+                m_gyro.getRotation2d(),
+                m_leftEncoder.getSelectedSensorPosition(),
+                m_rightEncoder.getSelectedSensorPosition());
     }
 
     private double getLeftPositionMeters() {
-            return m_leftEncoder.getSelectedSensorPosition() * Constants.DriveTrain.kPositionConversionFactor;
+        return m_leftEncoder.getSelectedSensorPosition()
+                * Constants.DriveTrain.kPositionConversionFactor;
     }
 
     private double getRightPositionMeters() {
-            return m_rightEncoder.getSelectedSensorPosition() * Constants.DriveTrain.kPositionConversionFactor;
+        return m_rightEncoder.getSelectedSensorPosition()
+                * Constants.DriveTrain.kPositionConversionFactor;
     }
 
     private double getLeftVelocityMetersPerSecond() {
-            return m_leftEncoder.getSelectedSensorVelocity() * Constants.DriveTrain.kVelocityConversionFactor;
+        return m_leftEncoder.getSelectedSensorVelocity()
+                * Constants.DriveTrain.kVelocityConversionFactor;
     }
 
     private double getRightVelocityMetersPerSecond() {
-            return m_rightEncoder.getSelectedSensorVelocity() * Constants.DriveTrain.kVelocityConversionFactor;
+        return m_rightEncoder.getSelectedSensorVelocity()
+                * Constants.DriveTrain.kVelocityConversionFactor;
     }
 }
