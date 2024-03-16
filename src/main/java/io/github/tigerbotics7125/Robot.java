@@ -41,7 +41,6 @@ public class Robot extends TimedRobot {
 
     { // instance initializer, look it up.
         m_autoChooser.setDefaultOption("Example", new PathPlannerAuto("Example"));
-        
     }
 
     SendableChooser<Constants.DriveTrain.ControlType> m_driveControlChooser =
@@ -152,7 +151,8 @@ public class Robot extends TimedRobot {
         //                                                 .andThen(auto.postCommand())),
         //                 () ->
         //                         CommandScheduler.getInstance()
-        //                                 .schedule(Commands.print("PATH PLANNER NOT IMPLEMENTED")));
+        //                                 .schedule(Commands.print("PATH PLANNER NOT
+        // IMPLEMENTED")));
     }
 
     @Override
