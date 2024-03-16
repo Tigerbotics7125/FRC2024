@@ -40,7 +40,7 @@ public class Robot extends TimedRobot {
     SendableChooser<PathPlannerAuto> m_autoChooser = new SendableChooser<>();
 
     { // instance initializer, look it up.
-        m_autoChooser.setDefaultOption("No Auto", new PathPlannerAuto("Example"));
+        m_autoChooser.setDefaultOption("Example", new PathPlannerAuto("Example"));
         
     }
 
