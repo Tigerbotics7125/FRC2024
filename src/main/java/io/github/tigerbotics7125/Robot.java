@@ -6,7 +6,6 @@
 package io.github.tigerbotics7125;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.revrobotics.CANSparkBase.IdleMode;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.RobotController;
@@ -38,25 +37,21 @@ public class Robot extends TimedRobot {
     private Intake m_intake = new Intake();
     private Shooter m_shooter = new Shooter();
     private Arm m_arm = new Arm();
-    
-    
 
-    //SendableChooser<PathPlannerAuto> m_autoChooser = new SendableChooser<>();
-     private SendableChooser<Command> autoChooser;
+    // SendableChooser<PathPlannerAuto> m_autoChooser = new SendableChooser<>();
+    private SendableChooser<Command> autoChooser;
 
     SendableChooser<Constants.DriveTrain.ControlType> m_driveControlChooser =
             new SendableChooser<>();
-            Command m_autonomousCommand;
+    Command m_autonomousCommand;
 
     @Override
     public void robotInit() {
-            //SmartDashboard.putData("Example Auto", new PathPlannerAuto("Example"));
+        // SmartDashboard.putData("Example Auto", new PathPlannerAuto("Example"));
         autoChooser = AutoBuilder.buildAutoChooser("Example");
         SmartDashboard.putData("Auto Mode", autoChooser);
-       
 
-
-        //m_autoChooser.setDefaultOption("Example", new PathPlannerAuto("Example"));
+        // m_autoChooser.setDefaultOption("Example", new PathPlannerAuto("Example"));
         m_driveControlChooser.setDefaultOption(
                 ControlType.CURVE_ROCKETLEAGUE.name(), ControlType.CURVE_ROCKETLEAGUE);
         for (ControlType controlType : ControlType.values()) {
@@ -147,12 +142,12 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousInit() {
-            m_autonomousCommand = getAutonomousCommand();
-            
-            if(m_autonomousCommand != null){
-                    m_autonomousCommand.schedule();
-            }
-            // Auto auto = m_autoChooser.getSelected();
+        m_autonomousCommand = getAutonomousCommand();
+
+        if (m_autonomousCommand != null) {
+            m_autonomousCommand.schedule();
+        }
+        // Auto auto = m_autoChooser.getSelected();
 
         // auto.autoCommand()
         //         .ifPresentOrElse(
@@ -169,15 +164,12 @@ public class Robot extends TimedRobot {
     }
 
     @Override
-    public void autonomousPeriodic() {
-    }
+    public void autonomousPeriodic() {}
 
     @Override
     public void teleopInit() {
         // Make sure autonomous commands are canceled for teleop
         CommandScheduler.getInstance().cancelAll();
-
-        
     }
 
     @Override
@@ -194,8 +186,8 @@ public class Robot extends TimedRobot {
 
     @Override
     public void simulationPeriodic() {}
-    public Command getAutonomousCommand(){
+
+    public Command getAutonomousCommand() {
         return autoChooser.getSelected();
     }
-    
 }
