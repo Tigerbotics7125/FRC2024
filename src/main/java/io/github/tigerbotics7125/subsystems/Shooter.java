@@ -27,7 +27,7 @@ public class Shooter extends SubsystemBase {
     private PIDController m_PID =
             new PIDController(Constants.Shooter.kP, Constants.Shooter.kI, Constants.Shooter.kD);
 
-    private RelativeEncoder m_encoder = m_left.getEncoder();
+    private RelativeEncoder m_encoder = m_right.getEncoder();
 
     public Shooter() {
         configureMotor(m_left);
@@ -60,7 +60,8 @@ public class Shooter extends SubsystemBase {
     }
 
     public Command prepShooter() {
-        return runOnce(() -> m_PID.setSetpoint(Constants.Shooter.kShootRPM));
+        return runOnce(() -> m_PID.setSetpoint(Constants.Shooter.kShootRPM))
+        .andThen(pidControl());
     }
 
     public Command shootNote(Intake intake) {
@@ -72,8 +73,8 @@ public class Shooter extends SubsystemBase {
     public Command pidControl() {
         return run(
                 () -> {
-                    double pidContribution = 12D * m_PID.calculate(m_encoder.getVelocity());
-                    m_left.setVoltage(pidContribution + Constants.Shooter.kFF);
+                    double pidContribution = m_PID.calculate(m_encoder.getVelocity());
+                    m_left.set(pidContribution);
                 });
     }
 
