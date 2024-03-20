@@ -48,7 +48,7 @@ public class Robot extends TimedRobot {
     @Override
     public void robotInit() {
         // SmartDashboard.putData("Example Auto", new PathPlannerAuto("Example"));
-        autoChooser = AutoBuilder.buildAutoChooser("Example");
+        autoChooser = AutoBuilder.buildAutoChooser("Test");
         SmartDashboard.putData("Auto Mode", autoChooser);
 
         // m_autoChooser.setDefaultOption("Example", new PathPlannerAuto("Example"));
