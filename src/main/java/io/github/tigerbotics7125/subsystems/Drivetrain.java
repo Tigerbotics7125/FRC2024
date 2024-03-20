@@ -12,7 +12,6 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.util.ReplanningConfig;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.REVLibError;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -29,6 +28,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import io.github.tigerbotics7125.Constants;
+import io.github.tigerbotics7125.lib.REVUtil;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
@@ -61,21 +61,8 @@ public class Drivetrain extends SubsystemBase {
         m_leftEncoder.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
         m_rightEncoder.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
 
-        int followerRetries = 0;
-        do {
-            Timer.delay(.02);
-            System.out.println("Setting follower...");
-            if (followerRetries > 5) break;
-        } while (m_backLeft.follow(m_frontLeft) != REVLibError.kOk);
-        System.out.println("Follower set!");
-
-        followerRetries = 0;
-        do {
-            Timer.delay(.02);
-            System.out.println("Setting follower...");
-            if (followerRetries > 5) break;
-        } while (m_backRight.follow(m_frontRight) != REVLibError.kOk);
-        System.out.println("Follower set!");
+        REVUtil.retryFailable(5, () -> m_backLeft.follow(m_frontLeft));
+        REVUtil.retryFailable(5, () -> m_backRight.follow(m_frontRight));
 
         m_frontRight.setInverted(true);
         // No need to tell backRight to invert, it's a follower.
