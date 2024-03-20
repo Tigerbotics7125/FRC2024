@@ -32,13 +32,13 @@ import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 public class Drivetrain extends SubsystemBase {
-    private CANSparkMax frontLeft =
+    private CANSparkMax m_frontLeft =
             new CANSparkMax(Constants.DriveTrain.kFrontLeftID, Constants.DriveTrain.kMotorType);
-    private CANSparkMax frontRight =
+    private CANSparkMax m_frontRight =
             new CANSparkMax(Constants.DriveTrain.kFrontRightID, Constants.DriveTrain.kMotorType);
-    private CANSparkMax backLeft =
+    private CANSparkMax m_backLeft =
             new CANSparkMax(Constants.DriveTrain.kBackLeftID, Constants.DriveTrain.kMotorType);
-    private CANSparkMax backRight =
+    private CANSparkMax m_backRight =
             new CANSparkMax(Constants.DriveTrain.kBackRightID, Constants.DriveTrain.kMotorType);
     private WPI_TalonSRX m_leftEncoder = new WPI_TalonSRX(1);
     private WPI_TalonSRX m_rightEncoder = new WPI_TalonSRX(2);
@@ -52,18 +52,18 @@ public class Drivetrain extends SubsystemBase {
     private PIDController m_rightPID = new PIDController(1, 0, 0);
 
     public Drivetrain() {
-        configureMotor(frontLeft);
-        configureMotor(frontRight);
-        configureMotor(backLeft);
-        configureMotor(backRight);
+        configureMotor(m_frontLeft);
+        configureMotor(m_frontRight);
+        configureMotor(m_backLeft);
+        configureMotor(m_backRight);
 
         m_leftEncoder.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
         m_rightEncoder.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
 
-        backLeft.follow(frontLeft);
-        backRight.follow(frontRight);
+        m_backLeft.follow(m_frontLeft);
+        m_backRight.follow(m_frontRight);
 
-        frontRight.setInverted(true);
+        m_frontRight.setInverted(true);
         // No need to tell backRight to invert, it's a follower.
 
         AutoBuilder.configureRamsete(
@@ -109,8 +109,8 @@ public class Drivetrain extends SubsystemBase {
                                     xSpeed.getAsDouble(),
                                     zRotation.getAsDouble(),
                                     squareInputs.getAsBoolean());
-                    frontLeft.set(ws.left);
-                    frontRight.set(ws.right);
+                    m_frontLeft.set(ws.left);
+                    m_frontRight.set(ws.right);
                 });
     }
 
@@ -123,26 +123,26 @@ public class Drivetrain extends SubsystemBase {
                                     xSpeed.getAsDouble(),
                                     zRotation.getAsDouble(),
                                     allowTurnInPlace.getAsBoolean());
-                    frontLeft.set(ws.left);
-                    frontRight.set(ws.right);
+                    m_frontLeft.set(ws.left);
+                    m_frontRight.set(ws.right);
                 });
     }
 
     public Command setIdleMode(IdleMode idleMode) {
         return runOnce(
                         () -> {
-                            frontLeft.setIdleMode(idleMode);
-                            frontRight.setIdleMode(idleMode);
-                            backLeft.setIdleMode(idleMode);
-                            backRight.setIdleMode(idleMode);
+                            m_frontLeft.setIdleMode(idleMode);
+                            m_frontRight.setIdleMode(idleMode);
+                            m_backLeft.setIdleMode(idleMode);
+                            m_backRight.setIdleMode(idleMode);
                         })
                 .ignoringDisable(true);
     }
 
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("/DT/Left", frontLeft.get());
-        SmartDashboard.putNumber("/DT/Right", frontRight.get());
+        SmartDashboard.putNumber("/DT/Left", m_frontLeft.get());
+        SmartDashboard.putNumber("/DT/Right", m_frontRight.get());
 
         m_odometry.update(
                 m_gyro.getRotation2d(),
@@ -188,9 +188,13 @@ public class Drivetrain extends SubsystemBase {
     private void driveRelative(ChassisSpeeds chassisSpeeds) {
         DifferentialDriveWheelSpeeds ws = m_kinematics.toWheelSpeeds(chassisSpeeds);
 
-        m_leftPID.setSetpoint(ws.leftMetersPerSecond);
-        m_rightPID.setSetpoint(ws.rightMetersPerSecond);
-        frontLeft.set(m_leftPID.calculate(getLeftVelocityMetersPerSecond()));
-        frontRight.set(m_rightPID.calculate(getRightVelocityMetersPerSecond()));
+        // frontLeft.set(
+        //         m_leftPID.calculate(getLeftVelocityMetersPerSecond(), ws.leftMetersPerSecond));
+        // frontRight.set(
+        //         m_rightPID.calculate(getRightVelocityMetersPerSecond(),
+        // ws.rightMetersPerSecond));
+
+        m_frontLeft.set(ws.leftMetersPerSecond / Constants.DriveTrain.kMaxLinearVelocity);
+        m_frontRight.set(ws.rightMetersPerSecond / Constants.DriveTrain.kMaxLinearVelocity);
     }
 }
