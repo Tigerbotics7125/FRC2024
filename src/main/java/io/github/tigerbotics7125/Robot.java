@@ -25,6 +25,7 @@ import io.github.tigerbotics7125.subsystems.Drivetrain;
 import io.github.tigerbotics7125.subsystems.Intake;
 import io.github.tigerbotics7125.subsystems.Shooter;
 import java.util.Map;
+import edu.wpi.first.wpilibj.Timer;
 
 public class Robot extends TimedRobot {
 
@@ -130,6 +131,7 @@ public class Robot extends TimedRobot {
     @Override
     public void robotPeriodic() {
         CommandScheduler.getInstance().run();
+        
 
         SmartDashboard.putData("DTControlType", m_driveControlChooser);
     }
@@ -142,6 +144,8 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousInit() {
+        m_drivetrain.resetEncoders().schedule();
+        Timer.delay(0.2);
         m_autonomousCommand = getAutonomousCommand();
 
         if (m_autonomousCommand != null) {
