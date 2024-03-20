@@ -12,6 +12,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.util.ReplanningConfig;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.REVLibError;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -60,8 +61,21 @@ public class Drivetrain extends SubsystemBase {
         m_leftEncoder.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
         m_rightEncoder.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
 
-        m_backLeft.follow(m_frontLeft);
-        m_backRight.follow(m_frontRight);
+        int followerRetries = 0;
+        do {
+            Timer.delay(.02);
+            System.out.println("Setting follower...");
+            if (followerRetries > 5) break;
+        } while (m_backLeft.follow(m_frontLeft) != REVLibError.kOk);
+        System.out.println("Follower set!");
+
+        followerRetries = 0;
+        do {
+            Timer.delay(.02);
+            System.out.println("Setting follower...");
+            if (followerRetries > 5) break;
+        } while (m_backRight.follow(m_frontRight) != REVLibError.kOk);
+        System.out.println("Follower set!");
 
         m_frontRight.setInverted(true);
         // No need to tell backRight to invert, it's a follower.
