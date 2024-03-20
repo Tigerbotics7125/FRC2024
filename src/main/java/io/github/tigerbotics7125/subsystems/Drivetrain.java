@@ -60,7 +60,6 @@ public class Drivetrain extends SubsystemBase {
 
         m_leftEncoder.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
         m_rightEncoder.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
-        
 
         REVUtil.retryFailable(5, () -> m_backLeft.follow(m_frontLeft));
         REVUtil.retryFailable(5, () -> m_backRight.follow(m_frontRight));
@@ -145,8 +144,8 @@ public class Drivetrain extends SubsystemBase {
     public void periodic() {
         SmartDashboard.putNumber("/DT/Left", m_frontLeft.get());
         SmartDashboard.putNumber("/DT/Right", m_frontRight.get());
-        SmartDashboard.putNumber("Left Motor Value",getLeftPositionMeters());
-        SmartDashboard.putNumber("Right Motor Value",getRightPositionMeters());
+        SmartDashboard.putNumber("Left Motor Value", getLeftPositionMeters());
+        SmartDashboard.putNumber("Right Motor Value", getRightPositionMeters());
 
         m_odometry.update(
                 m_gyro.getRotation2d(),
@@ -195,18 +194,17 @@ public class Drivetrain extends SubsystemBase {
         m_frontLeft.set(
                 m_leftPID.calculate(getLeftVelocityMetersPerSecond(), ws.leftMetersPerSecond));
         m_frontRight.set(
-                m_rightPID.calculate(getRightVelocityMetersPerSecond(),
-        ws.rightMetersPerSecond));
+                m_rightPID.calculate(getRightVelocityMetersPerSecond(), ws.rightMetersPerSecond));
 
-        //m_frontLeft.set(ws.leftMetersPerSecond / Constants.DriveTrain.kMaxLinearVelocity);
-        //m_frontRight.set(ws.rightMetersPerSecond / Constants.DriveTrain.kMaxLinearVelocity);
+        // m_frontLeft.set(ws.leftMetersPerSecond / Constants.DriveTrain.kMaxLinearVelocity);
+        // m_frontRight.set(ws.rightMetersPerSecond / Constants.DriveTrain.kMaxLinearVelocity);
     }
-    public Command resetEncoders(){
+
+    public Command resetEncoders() {
         return runOnce(
-                ()->{
-                 m_leftEncoder.setSelectedSensorPosition(0);
-                 m_rightEncoder.setSelectedSensorPosition(0);   
-                }
-        );
+                () -> {
+                    m_leftEncoder.setSelectedSensorPosition(0);
+                    m_rightEncoder.setSelectedSensorPosition(0);
+                });
     }
 }

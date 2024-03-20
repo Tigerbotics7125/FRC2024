@@ -10,6 +10,7 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -25,7 +26,6 @@ import io.github.tigerbotics7125.subsystems.Drivetrain;
 import io.github.tigerbotics7125.subsystems.Intake;
 import io.github.tigerbotics7125.subsystems.Shooter;
 import java.util.Map;
-import edu.wpi.first.wpilibj.Timer;
 
 public class Robot extends TimedRobot {
 
@@ -131,7 +131,6 @@ public class Robot extends TimedRobot {
     @Override
     public void robotPeriodic() {
         CommandScheduler.getInstance().run();
-        
 
         SmartDashboard.putData("DTControlType", m_driveControlChooser);
     }
