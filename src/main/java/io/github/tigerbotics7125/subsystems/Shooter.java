@@ -60,8 +60,7 @@ public class Shooter extends SubsystemBase {
     }
 
     public Command prepShooter() {
-        return runOnce(() -> m_PID.setSetpoint(Constants.Shooter.kShootRPM))
-        .andThen(pidControl());
+        return runOnce(() -> m_PID.setSetpoint(Constants.Shooter.kShootRPM)).andThen(pidControl());
     }
 
     public Command shootNote(Intake intake) {
