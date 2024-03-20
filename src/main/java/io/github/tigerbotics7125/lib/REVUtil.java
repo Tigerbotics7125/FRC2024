@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2024 Tigerbotics and it's members. All rights reserved.
+ * This work is licensed under the terms of the GNU GPLv3 license
+ * found in the root directory of this project.
+ */
 package io.github.tigerbotics7125.lib;
 
 import com.revrobotics.REVLibError;
@@ -11,11 +16,11 @@ public class REVUtil {
         do {
             i++;
             if (i > retries) {
-                System.out.println(String.format("FAILABLE ACTION STILL FAILED AFTER %d TRIES", retries));
+                System.out.println(
+                        String.format("FAILABLE ACTION STILL FAILED AFTER %d TRIES", retries));
                 return;
             }
         } while (failable.get() != REVLibError.kOk);
         System.out.println("Failable action succeded!");
     }
-
 }
