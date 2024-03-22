@@ -66,6 +66,7 @@ public class Drivetrain extends SubsystemBase {
         REVUtil.retryFailable(5, () -> m_backRight.follow(m_frontRight));
 
         m_frontRight.setInverted(true);
+        m_rightEncoder.setInverted(true);
         // No need to tell backRight to invert, it's a follower.
 
         AutoBuilder.configureRamsete(
@@ -188,7 +189,7 @@ public class Drivetrain extends SubsystemBase {
                 new DifferentialDriveWheelSpeeds(
                         getLeftVelocityMetersPerSecond(), getRightVelocityMetersPerSecond()));
     }
-
+    
     private void driveRelative(ChassisSpeeds chassisSpeeds) {
         DifferentialDriveWheelSpeeds ws = m_kinematics.toWheelSpeeds(chassisSpeeds);
 
@@ -206,6 +207,13 @@ public class Drivetrain extends SubsystemBase {
                 ()->{
                  m_leftEncoder.setSelectedSensorPosition(0);
                  m_rightEncoder.setSelectedSensorPosition(0);   
+                }
+        );
+    }
+    public Command resetGyro(){
+        return runOnce(
+                ()->{
+                 m_gyro.reset();
                 }
         );
     }
