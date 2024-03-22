@@ -188,7 +188,7 @@ public class Drivetrain extends SubsystemBase {
                 new DifferentialDriveWheelSpeeds(
                         getLeftVelocityMetersPerSecond(), getRightVelocityMetersPerSecond()));
     }
-    
+
     private void driveRelative(ChassisSpeeds chassisSpeeds) {
         DifferentialDriveWheelSpeeds ws = m_kinematics.toWheelSpeeds(chassisSpeeds);
 
@@ -208,11 +208,11 @@ public class Drivetrain extends SubsystemBase {
                     m_rightEncoder.setSelectedSensorPosition(0);
                 });
     }
-    public Command resetGyro(){
+
+    public Command resetGyro() {
         return runOnce(
-                ()->{
-                 m_gyro.reset();
-                }
-        );
+                () -> {
+                    m_gyro.reset();
+                });
     }
 }
