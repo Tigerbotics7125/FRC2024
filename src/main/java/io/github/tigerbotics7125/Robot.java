@@ -145,7 +145,10 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousInit() {
         m_drivetrain.resetEncoders().schedule();
+        m_drivetrain.resetGyro().schedule();
+
         Timer.delay(0.2);
+
         m_autonomousCommand = getAutonomousCommand();
 
         if (m_autonomousCommand != null) {
