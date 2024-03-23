@@ -21,6 +21,7 @@ import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SerialPort;
+import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive.WheelSpeeds;
@@ -43,14 +44,14 @@ public class Drivetrain extends SubsystemBase {
             new CANSparkMax(Constants.DriveTrain.kBackRightID, Constants.DriveTrain.kMotorType);
     private WPI_TalonSRX m_leftEncoder = new WPI_TalonSRX(1);
     private WPI_TalonSRX m_rightEncoder = new WPI_TalonSRX(2);
-    private AHRS m_gyro = new AHRS(SerialPort.Port.kMXP);
+    public AHRS m_gyro = new AHRS(SPI.Port.kMXP);
     private DifferentialDriveOdometry m_odometry =
             new DifferentialDriveOdometry(
                     m_gyro.getRotation2d(), getLeftPositionMeters(), getRightPositionMeters());
     private DifferentialDriveKinematics m_kinematics =
             new DifferentialDriveKinematics(Units.inchesToMeters(21));
-    private PIDController m_leftPID = new PIDController(0.1, 0, 0);
-    private PIDController m_rightPID = new PIDController(0.1, 0, 0);
+    private PIDController m_leftPID = new PIDController(1.75, 0, 0);
+    private PIDController m_rightPID = new PIDController(1.75, 0, 0);
 
     public Drivetrain() {
         configureMotor(m_frontLeft);
@@ -64,7 +65,7 @@ public class Drivetrain extends SubsystemBase {
         REVUtil.retryFailable(5, () -> m_backLeft.follow(m_frontLeft));
         REVUtil.retryFailable(5, () -> m_backRight.follow(m_frontRight));
 
-        m_frontRight.setInverted(true);
+        m_frontLeft.setInverted(true);
         m_leftEncoder.setInverted(true);
         // No need to tell backRight to invert, it's a follower.
 
@@ -148,10 +149,12 @@ public class Drivetrain extends SubsystemBase {
         SmartDashboard.putNumber("Left Motor Value", getLeftPositionMeters());
         SmartDashboard.putNumber("Right Motor Value", getRightPositionMeters());
 
+        
+
         m_odometry.update(
                 m_gyro.getRotation2d(),
-                m_leftEncoder.getSelectedSensorPosition(),
-                m_rightEncoder.getSelectedSensorPosition());
+                getLeftPositionMeters(),
+                getRightPositionMeters());
     }
 
     private double getLeftPositionMeters() {
@@ -194,10 +197,12 @@ public class Drivetrain extends SubsystemBase {
         var leftPID = m_leftPID.calculate(getLeftVelocityMetersPerSecond(), ws.leftMetersPerSecond);
         var rightPID =
                 m_rightPID.calculate(getRightVelocityMetersPerSecond(), ws.rightMetersPerSecond);
-
+        
         m_frontLeft.set(leftPID);
         m_frontRight.set(rightPID);
 
+        SmartDashboard.putNumber("Left set Wheel Speed", ws.leftMetersPerSecond);
+        SmartDashboard.putNumber("Right set Wheel Speed", ws.rightMetersPerSecond);
         SmartDashboard.putNumber("Left pid", leftPID);
         SmartDashboard.putNumber("Right pid", rightPID);
 
