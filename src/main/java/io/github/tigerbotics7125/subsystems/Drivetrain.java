@@ -5,6 +5,8 @@
  */
 package io.github.tigerbotics7125.subsystems;
 
+import static io.github.tigerbotics7125.Constants.DriveTrain.*;
+
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.kauailabs.navx.frc.AHRS;
@@ -24,6 +26,7 @@ import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive.WheelSpeeds;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -33,24 +36,32 @@ import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 public class Drivetrain extends SubsystemBase {
-  private CANSparkMax m_frontLeft =
-      new CANSparkMax(Constants.DriveTrain.kFrontLeftID, Constants.DriveTrain.kMotorType);
-  private CANSparkMax m_frontRight =
-      new CANSparkMax(Constants.DriveTrain.kFrontRightID, Constants.DriveTrain.kMotorType);
-  private CANSparkMax m_backLeft =
-      new CANSparkMax(Constants.DriveTrain.kBackLeftID, Constants.DriveTrain.kMotorType);
-  private CANSparkMax m_backRight =
-      new CANSparkMax(Constants.DriveTrain.kBackRightID, Constants.DriveTrain.kMotorType);
-  private WPI_TalonSRX m_leftEncoder = new WPI_TalonSRX(1);
-  private WPI_TalonSRX m_rightEncoder = new WPI_TalonSRX(2);
+  // Drive Motors
+  private CANSparkMax m_frontLeft = new CANSparkMax(kFrontLeftID, kMotorType);
+  private CANSparkMax m_frontRight = new CANSparkMax(kFrontRightID, kMotorType);
+  private CANSparkMax m_backLeft = new CANSparkMax(kBackLeftID, kMotorType);
+  private CANSparkMax m_backRight = new CANSparkMax(kBackRightID, kMotorType);
+
+  // Encoder Talons
+  private WPI_TalonSRX m_leftEncoder = new WPI_TalonSRX(kLeftTalonID);
+  private WPI_TalonSRX m_rightEncoder = new WPI_TalonSRX(kRightTalonID);
+
+  // NavX Gyroscope
   public AHRS m_gyro = new AHRS(SPI.Port.kMXP);
+
+  // Odometry / Kinematics
   private DifferentialDriveOdometry m_odometry =
       new DifferentialDriveOdometry(
           m_gyro.getRotation2d(), getLeftPositionMeters(), getRightPositionMeters());
   private DifferentialDriveKinematics m_kinematics =
-      new DifferentialDriveKinematics(Units.inchesToMeters(21));
-  private PIDController m_leftPID = new PIDController(1.75, 0, 0);
-  private PIDController m_rightPID = new PIDController(1.75, 0, 0);
+      new DifferentialDriveKinematics(Constants.DriveTrain.kTrackWidth);
+
+  // Path following PID Controllers
+  private PIDController m_leftPID = new PIDController(kP, kI, kD);
+  private PIDController m_rightPID = new PIDController(kP, kI, kD);
+
+  // Field2d visualization
+  private Field2d m_field = new Field2d();
 
   public Drivetrain() {
     configureMotor(m_frontLeft);
@@ -58,38 +69,33 @@ public class Drivetrain extends SubsystemBase {
     configureMotor(m_backLeft);
     configureMotor(m_backRight);
 
+    // Make sure encoders are selected.
     m_leftEncoder.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
     m_rightEncoder.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
 
+    // Set followers, using retry since they've failed before.
     REVUtil.retryFailable(5, () -> m_backLeft.follow(m_frontLeft));
     REVUtil.retryFailable(5, () -> m_backRight.follow(m_frontRight));
 
-    m_frontLeft.setInverted(true);
-    m_leftEncoder.setInverted(true);
-    // No need to tell backRight to invert, it's a follower.
+    // Set inversions.
+    m_frontLeft.setInverted(kLeftInverted);
+    m_leftEncoder.setInverted(kLeftInverted);
 
+    // Default PP AutoBuilder
     AutoBuilder.configureRamsete(
-        this::getPose, // Robot pose supplier
-        this::resetPose, // Method to reset odometry (will be called if your auto has a
-        // starting pose)
-        this::getCurrentSpeeds, // Current ChassisSpeeds supplier
-        this::driveRelative, // Method that will drive the robot given ChassisSpeeds
-        new ReplanningConfig(), // Default path replanning config. See the API for the
-        // options here
+        this::getPose,
+        this::setPose,
+        this::getChassisSpeeds,
+        this::setChassisSpeeds,
+        new ReplanningConfig(),
         () -> {
-          // Boolean supplier that controls when the path will be mirrored for the red
-          // alliance
-          // This will flip the path being followed to the red side of the field.
-          // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
-
           var alliance = DriverStation.getAlliance();
           if (alliance.isPresent()) {
             return alliance.get() == DriverStation.Alliance.Red;
           }
           return false;
         },
-        this // Reference to this subsystem to set requirements
-        );
+        this);
   }
 
   private void configureMotor(CANSparkMax motor) {
@@ -137,16 +143,6 @@ public class Drivetrain extends SubsystemBase {
         .ignoringDisable(true);
   }
 
-  @Override
-  public void periodic() {
-    SmartDashboard.putNumber("/DT/Left", m_frontLeft.get());
-    SmartDashboard.putNumber("/DT/Right", m_frontRight.get());
-    SmartDashboard.putNumber("Left Motor Value", getLeftPositionMeters());
-    SmartDashboard.putNumber("Right Motor Value", getRightPositionMeters());
-
-    m_odometry.update(m_gyro.getRotation2d(), getLeftPositionMeters(), getRightPositionMeters());
-  }
-
   private double getLeftPositionMeters() {
     return m_leftEncoder.getSelectedSensorPosition()
         * Constants.DriveTrain.kPositionConversionFactor;
@@ -171,46 +167,43 @@ public class Drivetrain extends SubsystemBase {
     return m_odometry.getPoseMeters();
   }
 
-  private void resetPose(Pose2d pose) {
-    m_odometry.resetPosition(
-        m_gyro.getRotation2d(), getLeftPositionMeters(), getRightPositionMeters(), pose);
-  }
-
-  private ChassisSpeeds getCurrentSpeeds() {
+  private ChassisSpeeds getChassisSpeeds() {
     return m_kinematics.toChassisSpeeds(
         new DifferentialDriveWheelSpeeds(
             getLeftVelocityMetersPerSecond(), getRightVelocityMetersPerSecond()));
   }
 
-  public void driveRelative(ChassisSpeeds chassisSpeeds) {
+  private void setPose(Pose2d pose) {
+    m_odometry.resetPosition(
+        m_gyro.getRotation2d(), getLeftPositionMeters(), getRightPositionMeters(), pose);
+  }
+
+  public void setChassisSpeeds(ChassisSpeeds chassisSpeeds) {
     DifferentialDriveWheelSpeeds ws = m_kinematics.toWheelSpeeds(chassisSpeeds);
-    var leftPID = m_leftPID.calculate(getLeftVelocityMetersPerSecond(), ws.leftMetersPerSecond);
-    var rightPID = m_rightPID.calculate(getRightVelocityMetersPerSecond(), ws.rightMetersPerSecond);
+
+    double leftPID = m_leftPID.calculate(getLeftVelocityMetersPerSecond(), ws.leftMetersPerSecond);
+    double rightPID =
+        m_rightPID.calculate(getRightVelocityMetersPerSecond(), ws.rightMetersPerSecond);
 
     m_frontLeft.set(leftPID);
     m_frontRight.set(rightPID);
 
-    SmartDashboard.putNumber("Left set Wheel Speed", ws.leftMetersPerSecond);
-    SmartDashboard.putNumber("Right set Wheel Speed", ws.rightMetersPerSecond);
-    SmartDashboard.putNumber("Left pid", leftPID);
-    SmartDashboard.putNumber("Right pid", rightPID);
-
-    // m_frontLeft.set(ws.leftMetersPerSecond / Constants.DriveTrain.kMaxLinearVelocity);
-    // m_frontRight.set(ws.rightMetersPerSecond / Constants.DriveTrain.kMaxLinearVelocity);
+    SmartDashboard.putNumber("Left Velocity Setpoint m/s", ws.leftMetersPerSecond);
+    SmartDashboard.putNumber("Right Velocity Setpoint m/s", ws.rightMetersPerSecond);
+    SmartDashboard.putNumber("Omega Velocity Setpoint rad/s", chassisSpeeds.omegaRadiansPerSecond);
+    SmartDashboard.putNumber("Left PID Contribution", leftPID);
+    SmartDashboard.putNumber("Right PID Contribution", rightPID);
   }
 
-  public Command resetEncoders() {
-    return runOnce(
-        () -> {
-          m_leftEncoder.setSelectedSensorPosition(0);
-          m_rightEncoder.setSelectedSensorPosition(0);
-        });
-  }
+  @Override
+  public void periodic() {
+    SmartDashboard.putNumber("Left Velocity m/s", getLeftVelocityMetersPerSecond());
+    SmartDashboard.putNumber("Right Velocity m/s", getRightVelocityMetersPerSecond());
+    SmartDashboard.putNumber("Omega Velocity rad/s", Units.degreesToRadians(-m_gyro.getRate()));
+    SmartDashboard.putNumber("Left Position m", getLeftPositionMeters());
+    SmartDashboard.putNumber("Right Position m", getRightPositionMeters());
 
-  public Command resetGyro() {
-    return runOnce(
-        () -> {
-          m_gyro.reset();
-        });
+    m_odometry.update(m_gyro.getRotation2d(), getLeftPositionMeters(), getRightPositionMeters());
+    m_field.setRobotPose(getPose());
   }
 }

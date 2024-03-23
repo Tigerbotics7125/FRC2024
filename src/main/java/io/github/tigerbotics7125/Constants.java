@@ -33,17 +33,23 @@ public final class Constants {
     public static final int kBackLeftID = 3;
     public static final int kBackRightID = 4;
 
+    public static final int kLeftTalonID = 1;
+    public static final int kRightTalonID = 2;
+
+    public static final boolean kLeftInverted = true;
+
     public static final double kMaxLinearVelocity = Units.feetToMeters(12.98); // meters per second
 
-    // 1 unit * 1 revolution * 2 * pi * 3 in (radius) meters = linear wheel distance in meters
-    //          4096 units     1 revolution
     public static final double kPositionConversionFactor =
         1D / 4096D * 2D * Math.PI * Units.inchesToMeters(3D);
-    // 1 unit * 1000 ms * kPositionConversionFactor = linear wheel distance in meters per
-    // second.
-    // 100 ms   1 sec
     public static final double kVelocityConversionFactor =
         1D / 100D * 1000D * kPositionConversionFactor;
+
+    public static final double kTrackWidth = Units.inchesToMeters(21);
+
+    public static final double kP = 1.75;
+    public static final double kI = 0D;
+    public static final double kD = 0D;
   }
 
   public static final class Intake {

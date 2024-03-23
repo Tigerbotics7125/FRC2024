@@ -5,6 +5,8 @@
  */
 package io.github.tigerbotics7125.subsystems;
 
+import static io.github.tigerbotics7125.Constants.Intake.*;
+
 import com.revrobotics.CANSparkMax;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.Timer;
@@ -15,8 +17,7 @@ import java.util.function.DoubleSupplier;
 
 public class Intake extends SubsystemBase {
 
-  private CANSparkMax m_intake =
-      new CANSparkMax(Constants.Intake.kIntakeID, Constants.Intake.kMotorType);
+  private CANSparkMax m_intake = new CANSparkMax(kIntakeID, kMotorType);
 
   public Intake() {
     configureMotor(m_intake);
@@ -26,9 +27,9 @@ public class Intake extends SubsystemBase {
     motor.restoreFactoryDefaults();
     Timer.delay(.02);
 
-    motor.setSmartCurrentLimit(Constants.Intake.kCurrentLimit);
+    motor.setSmartCurrentLimit(kCurrentLimit);
 
-    m_intake.setInverted(Constants.Intake.kInverted);
+    m_intake.setInverted(kInverted);
 
     motor.burnFlash();
     Timer.delay(.02);
@@ -39,7 +40,7 @@ public class Intake extends SubsystemBase {
   }
 
   public Command intake() {
-    return run(() -> m_intake.set(Constants.Intake.kIntakeSpeed));
+    return run(() -> m_intake.set(kIntakeSpeed));
   }
 
   public Command outtake(DoubleSupplier axis) {

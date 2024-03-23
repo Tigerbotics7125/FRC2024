@@ -5,6 +5,8 @@
  */
 package io.github.tigerbotics7125.subsystems;
 
+import static io.github.tigerbotics7125.Constants.Shooter.*;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import edu.wpi.first.math.controller.PIDController;
@@ -15,17 +17,12 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import io.github.tigerbotics7125.Constants;
 
-// TODO contemplate using a BangBangController, especially if the shooter becomes more massive.
-
 public class Shooter extends SubsystemBase {
 
-  private CANSparkMax m_left =
-      new CANSparkMax(Constants.Shooter.kLeftID, Constants.Shooter.kMotorType);
-  private CANSparkMax m_right =
-      new CANSparkMax(Constants.Shooter.kRightID, Constants.Shooter.kMotorType);
+  private CANSparkMax m_left = new CANSparkMax(kLeftID, kMotorType);
+  private CANSparkMax m_right = new CANSparkMax(kRightID, kMotorType);
 
-  private PIDController m_PID =
-      new PIDController(Constants.Shooter.kP, Constants.Shooter.kI, Constants.Shooter.kD);
+  private PIDController m_PID = new PIDController(kP, kI, kD);
 
   private RelativeEncoder m_encoder = m_right.getEncoder();
 
@@ -33,10 +30,10 @@ public class Shooter extends SubsystemBase {
     configureMotor(m_left);
     configureMotor(m_right);
 
-    m_left.setInverted(Constants.Shooter.kInvertedFollower);
+    m_left.setInverted(kInvertedFollower);
     m_right.follow(m_left);
 
-    m_PID.setTolerance(0, Constants.Shooter.kPIDTolerance);
+    m_PID.setTolerance(0, kPIDTolerance);
   }
 
   private void configureMotor(CANSparkMax motor) {
@@ -77,13 +74,6 @@ public class Shooter extends SubsystemBase {
         });
   }
 
-  /**
-   * TODO seth: create a method to keep the shooter at a constant but slightly less velocity than
-   * our shooter velocity. This should be the new default method. Eventually this should consider
-   * our distance from the speaker so that it automatically ramps up to shooting speed when we get
-   * closer. Not entirely relevant but also should look into using the InterpolatingMap or whatever
-   * its called, and some data we can create to find values for shooting from a distance.
-   */
   @Override
   public void periodic() {}
 }
