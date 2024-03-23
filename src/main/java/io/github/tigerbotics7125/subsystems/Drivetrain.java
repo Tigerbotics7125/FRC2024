@@ -49,8 +49,8 @@ public class Drivetrain extends SubsystemBase {
                     m_gyro.getRotation2d(), getLeftPositionMeters(), getRightPositionMeters());
     private DifferentialDriveKinematics m_kinematics =
             new DifferentialDriveKinematics(Units.inchesToMeters(21));
-    private PIDController m_leftPID = new PIDController(0.5, 0, 0);
-    private PIDController m_rightPID = new PIDController(0.5, 0, 0);
+    private PIDController m_leftPID = new PIDController(0.1, 0, 0);
+    private PIDController m_rightPID = new PIDController(0.1, 0, 0);
 
     public Drivetrain() {
         configureMotor(m_frontLeft);
@@ -65,7 +65,7 @@ public class Drivetrain extends SubsystemBase {
         REVUtil.retryFailable(5, () -> m_backRight.follow(m_frontRight));
 
         m_frontRight.setInverted(true);
-        m_rightEncoder.setInverted(true);
+        m_leftEncoder.setInverted(true);
         // No need to tell backRight to invert, it's a follower.
 
         AutoBuilder.configureRamsete(
@@ -189,13 +189,16 @@ public class Drivetrain extends SubsystemBase {
                         getLeftVelocityMetersPerSecond(), getRightVelocityMetersPerSecond()));
     }
     
-    private void driveRelative(ChassisSpeeds chassisSpeeds) {
+    public void driveRelative(ChassisSpeeds chassisSpeeds) {
         DifferentialDriveWheelSpeeds ws = m_kinematics.toWheelSpeeds(chassisSpeeds);
+        var leftPID = m_leftPID.calculate(getLeftVelocityMetersPerSecond(), ws.leftMetersPerSecond);
+        var rightPID = m_rightPID.calculate(getRightVelocityMetersPerSecond(), ws.rightMetersPerSecond);
+        
+        m_frontLeft.set(leftPID);
+        m_frontRight.set(rightPID);
 
-        m_frontLeft.set(
-                m_leftPID.calculate(getLeftVelocityMetersPerSecond(), ws.leftMetersPerSecond));
-        m_frontRight.set(
-                m_rightPID.calculate(getRightVelocityMetersPerSecond(), ws.rightMetersPerSecond));
+        SmartDashboard.putNumber("Left pid", leftPID);
+        SmartDashboard.putNumber("Right pid", rightPID);
 
         // m_frontLeft.set(ws.leftMetersPerSecond / Constants.DriveTrain.kMaxLinearVelocity);
         // m_frontRight.set(ws.rightMetersPerSecond / Constants.DriveTrain.kMaxLinearVelocity);
