@@ -177,7 +177,9 @@ public class Robot extends TimedRobot {
     public void teleopInit() {
         // Make sure autonomous commands are canceled for teleop
         CommandScheduler.getInstance().cancelAll();
-        var cmd =Commands.run(()->m_drivetrain.driveRelative(new ChassisSpeeds(1,0,0)),m_drivetrain);
+        var cmd =
+                Commands.run(
+                        () -> m_drivetrain.driveRelative(new ChassisSpeeds(1, 0, 0)), m_drivetrain);
         cmd.schedule();
     }
 
