@@ -20,7 +20,6 @@ import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -149,12 +148,8 @@ public class Drivetrain extends SubsystemBase {
         SmartDashboard.putNumber("Left Motor Value", getLeftPositionMeters());
         SmartDashboard.putNumber("Right Motor Value", getRightPositionMeters());
 
-        
-
         m_odometry.update(
-                m_gyro.getRotation2d(),
-                getLeftPositionMeters(),
-                getRightPositionMeters());
+                m_gyro.getRotation2d(), getLeftPositionMeters(), getRightPositionMeters());
     }
 
     private double getLeftPositionMeters() {
@@ -197,7 +192,7 @@ public class Drivetrain extends SubsystemBase {
         var leftPID = m_leftPID.calculate(getLeftVelocityMetersPerSecond(), ws.leftMetersPerSecond);
         var rightPID =
                 m_rightPID.calculate(getRightVelocityMetersPerSecond(), ws.rightMetersPerSecond);
-        
+
         m_frontLeft.set(leftPID);
         m_frontRight.set(rightPID);
 
