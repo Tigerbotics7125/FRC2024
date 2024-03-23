@@ -189,7 +189,7 @@ public class Drivetrain extends SubsystemBase {
                         getLeftVelocityMetersPerSecond(), getRightVelocityMetersPerSecond()));
     }
 
-    private void driveRelative(ChassisSpeeds chassisSpeeds) {
+    public void driveRelative(ChassisSpeeds chassisSpeeds) {
         DifferentialDriveWheelSpeeds ws = m_kinematics.toWheelSpeeds(chassisSpeeds);
         var leftPID = m_leftPID.calculate(getLeftVelocityMetersPerSecond(), ws.leftMetersPerSecond);
         var rightPID = m_rightPID.calculate(getRightVelocityMetersPerSecond(), ws.rightMetersPerSecond);
