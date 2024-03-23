@@ -15,42 +15,41 @@ import java.util.function.DoubleSupplier;
 
 public class Intake extends SubsystemBase {
 
-    private CANSparkMax m_intake =
-            new CANSparkMax(Constants.Intake.kIntakeID, Constants.Intake.kMotorType);
+  private CANSparkMax m_intake =
+      new CANSparkMax(Constants.Intake.kIntakeID, Constants.Intake.kMotorType);
 
-    public Intake() {
-        configureMotor(m_intake);
-    }
+  public Intake() {
+    configureMotor(m_intake);
+  }
 
-    private void configureMotor(CANSparkMax motor) {
-        motor.restoreFactoryDefaults();
-        Timer.delay(.02);
+  private void configureMotor(CANSparkMax motor) {
+    motor.restoreFactoryDefaults();
+    Timer.delay(.02);
 
-        motor.setSmartCurrentLimit(Constants.Intake.kCurrentLimit);
+    motor.setSmartCurrentLimit(Constants.Intake.kCurrentLimit);
 
-        m_intake.setInverted(Constants.Intake.kInverted);
+    m_intake.setInverted(Constants.Intake.kInverted);
 
-        motor.burnFlash();
-        Timer.delay(.02);
-    }
+    motor.burnFlash();
+    Timer.delay(.02);
+  }
 
-    public Command disable() {
-        return run(m_intake::disable);
-    }
+  public Command disable() {
+    return run(m_intake::disable);
+  }
 
-    public Command intake() {
-        return run(() -> m_intake.set(Constants.Intake.kIntakeSpeed));
-    }
+  public Command intake() {
+    return run(() -> m_intake.set(Constants.Intake.kIntakeSpeed));
+  }
 
-    public Command outtake(DoubleSupplier axis) {
-        return run(
-                () ->
-                        m_intake.set(
-                                MathUtil.interpolate(
-                                        0, Constants.Intake.kMaxOutakeSpeed, axis.getAsDouble())));
-    }
+  public Command outtake(DoubleSupplier axis) {
+    return run(
+        () ->
+            m_intake.set(
+                MathUtil.interpolate(0, Constants.Intake.kMaxOutakeSpeed, axis.getAsDouble())));
+  }
 
-    public Command feedShooter() {
-        return run(() -> m_intake.set(Constants.Intake.kFeedSpeed));
-    }
+  public Command feedShooter() {
+    return run(() -> m_intake.set(Constants.Intake.kFeedSpeed));
+  }
 }

@@ -11,8 +11,8 @@ import java.util.Optional;
 
 public class NoAuto implements Auto {
 
-    @Override
-    public Optional<Command> autoCommand() {
-        return Optional.of(Commands.none());
-    }
+  @Override
+  public Optional<Command> autoCommand() {
+    return Optional.of(Commands.none());
+  }
 }

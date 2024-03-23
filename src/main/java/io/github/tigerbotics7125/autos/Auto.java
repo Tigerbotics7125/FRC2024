@@ -11,22 +11,22 @@ import java.util.Optional;
 
 public interface Auto {
 
-    /** @return The command to run before running this auto. */
-    default Command preCommand() {
-        return Commands.none();
-    }
+  /** @return The command to run before running this auto. */
+  default Command preCommand() {
+    return Commands.none();
+  }
 
-    /** @return An Optional containing the auto command, or empty if should be pathplanner. */
-    Optional<Command> autoCommand();
+  /** @return An Optional containing the auto command, or empty if should be pathplanner. */
+  Optional<Command> autoCommand();
 
-    // TOOD uncomment these as they are part of pathplanner
+  // TOOD uncomment these as they are part of pathplanner
 
-    // List<PathPlannerTrajectory> getPath();
+  // List<PathPlannerTrajectory> getPath();
 
-    // Map<String, Command> getEventMap();
+  // Map<String, Command> getEventMap();
 
-    /** @return The command to run after running this auto. */
-    default Command postCommand() {
-        return Commands.none();
-    }
+  /** @return The command to run after running this auto. */
+  default Command postCommand() {
+    return Commands.none();
+  }
 }

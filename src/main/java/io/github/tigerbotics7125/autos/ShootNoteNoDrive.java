@@ -15,24 +15,24 @@ import java.util.Optional;
 
 public class ShootNoteNoDrive implements Auto {
 
-    private Arm m_arm;
-    private Intake m_intake;
-    private Shooter m_shooter;
+  private Arm m_arm;
+  private Intake m_intake;
+  private Shooter m_shooter;
 
-    public ShootNoteNoDrive(Arm arm, Intake intake, Shooter shooter) {
-        m_arm = arm;
-        m_intake = intake;
-        m_shooter = shooter;
-    }
+  public ShootNoteNoDrive(Arm arm, Intake intake, Shooter shooter) {
+    m_arm = arm;
+    m_intake = intake;
+    m_shooter = shooter;
+  }
 
-    @Override
-    public Optional<Command> autoCommand() {
-        Command cmd =
-                Commands.sequence(
-                                m_arm.pidControl(ArmState.SPEAKERAUTO).until(m_arm.atState()),
-                                m_shooter.shootNote(m_intake))
-                        .withTimeout(5);
+  @Override
+  public Optional<Command> autoCommand() {
+    Command cmd =
+        Commands.sequence(
+                m_arm.pidControl(ArmState.SPEAKERAUTO).until(m_arm.atState()),
+                m_shooter.shootNote(m_intake))
+            .withTimeout(5);
 
-        return Optional.of(cmd);
-    }
+    return Optional.of(cmd);
+  }
 }

@@ -27,82 +27,81 @@ import java.util.function.DoubleSupplier;
 
 public class Arm extends SubsystemBase {
 
-    private CANSparkMax m_left = new CANSparkMax(Constants.Arm.kLeftID, Constants.Arm.kMotorType);
-    private CANSparkMax m_right = new CANSparkMax(Constants.Arm.kRightID, Constants.Arm.kMotorType);
+  private CANSparkMax m_left = new CANSparkMax(Constants.Arm.kLeftID, Constants.Arm.kMotorType);
+  private CANSparkMax m_right = new CANSparkMax(Constants.Arm.kRightID, Constants.Arm.kMotorType);
 
-    private RelativeEncoder m_encoder = m_left.getEncoder();
+  private RelativeEncoder m_encoder = m_left.getEncoder();
 
-    private PIDController m_PID = Constants.Arm.kPID;
-    private ArmFeedforward m_feedforward = Constants.Arm.kFF;
+  private PIDController m_PID = Constants.Arm.kPID;
+  private ArmFeedforward m_feedforward = Constants.Arm.kFF;
 
-    public Arm() {
-        configureMotor(m_left);
-        configureMotor(m_right);
-        m_right.follow(m_left, Constants.Arm.kFollowerInverted);
+  public Arm() {
+    configureMotor(m_left);
+    configureMotor(m_right);
+    m_right.follow(m_left, Constants.Arm.kFollowerInverted);
 
-        m_encoder.setPositionConversionFactor(Constants.Arm.kPositionConversionFactor);
-        m_encoder.setVelocityConversionFactor(Constants.Arm.kVelocityConversionFactor);
-        m_encoder.setPosition(0);
-    }
+    m_encoder.setPositionConversionFactor(Constants.Arm.kPositionConversionFactor);
+    m_encoder.setVelocityConversionFactor(Constants.Arm.kVelocityConversionFactor);
+    m_encoder.setPosition(0);
+  }
 
-    private void configureMotor(CANSparkMax motor) {
-        motor.restoreFactoryDefaults();
-        Timer.delay(.02);
+  private void configureMotor(CANSparkMax motor) {
+    motor.restoreFactoryDefaults();
+    Timer.delay(.02);
 
-        motor.setSmartCurrentLimit(Constants.Arm.kCurrentLimit);
-        motor.setIdleMode(IdleMode.kCoast);
-        motor.burnFlash();
-        Timer.delay(.02);
-    }
+    motor.setSmartCurrentLimit(Constants.Arm.kCurrentLimit);
+    motor.setIdleMode(IdleMode.kCoast);
+    motor.burnFlash();
+    Timer.delay(.02);
+  }
 
-    public Command disable() {
-        return run(m_left::stopMotor);
-    }
+  public Command disable() {
+    return run(m_left::stopMotor);
+  }
 
-    public Command voltageControl(DoubleSupplier input) {
-        return run(() -> m_left.setVoltage(input.getAsDouble()));
-    }
+  public Command voltageControl(DoubleSupplier input) {
+    return run(() -> m_left.setVoltage(input.getAsDouble()));
+  }
 
-    public Command pidControl(ArmState state) {
-        return runOnce(() -> m_PID.setSetpoint(state.kPosition))
-                .andThen(
-                        run(
-                                () -> {
-                                    double pidContribution =
-                                            12D * m_PID.calculate(m_encoder.getPosition());
-                                    // double ffContribution =
-                                    //         m_feedforward.calculate(m_PID.getSetpoint(), 0);
-                                    m_left.setVoltage(pidContribution); // + ffContribution);
-                                }));
-    }
+  public Command pidControl(ArmState state) {
+    return runOnce(() -> m_PID.setSetpoint(state.kPosition))
+        .andThen(
+            run(
+                () -> {
+                  double pidContribution = 12D * m_PID.calculate(m_encoder.getPosition());
+                  // double ffContribution =
+                  //         m_feedforward.calculate(m_PID.getSetpoint(), 0);
+                  m_left.setVoltage(pidContribution); // + ffContribution);
+                }));
+  }
 
-    public Command resetEncoder() {
-        return runOnce(() -> m_encoder.setPosition(0));
-    }
+  public Command resetEncoder() {
+    return runOnce(() -> m_encoder.setPosition(0));
+  }
 
-    public Command autoHome() {
-        // TODO make a command using current detection to stop the arm at the bottom and redefine
-        // the position as 0 (or whatever angle it should be).
-        // You could (should) also be checking the current spike in periodic and stopping the motors
-        // if something is awry.
-        return Commands.none();
-    }
+  public Command autoHome() {
+    // TODO make a command using current detection to stop the arm at the bottom and redefine
+    // the position as 0 (or whatever angle it should be).
+    // You could (should) also be checking the current spike in periodic and stopping the motors
+    // if something is awry.
+    return Commands.none();
+  }
 
-    public Command setIdleMode(IdleMode idleMode) {
-        return runOnce(
-                        () -> {
-                            m_left.setIdleMode(idleMode);
-                            m_right.setIdleMode(idleMode);
-                        })
-                .ignoringDisable(true);
-    }
+  public Command setIdleMode(IdleMode idleMode) {
+    return runOnce(
+            () -> {
+              m_left.setIdleMode(idleMode);
+              m_right.setIdleMode(idleMode);
+            })
+        .ignoringDisable(true);
+  }
 
-    public Trigger atState() {
-        return new Trigger(m_PID::atSetpoint);
-    }
+  public Trigger atState() {
+    return new Trigger(m_PID::atSetpoint);
+  }
 
-    @Override
-    public void periodic() {
-        SmartDashboard.putNumber("arm", m_encoder.getPosition());
-    }
+  @Override
+  public void periodic() {
+    SmartDashboard.putNumber("arm", m_encoder.getPosition());
+  }
 }
