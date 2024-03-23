@@ -134,6 +134,8 @@ public class Robot extends TimedRobot {
         CommandScheduler.getInstance().run();
 
         SmartDashboard.putData("DTControlType", m_driveControlChooser);
+
+        SmartDashboard.putNumber("Gyro", m_drivetrain.m_gyro.getAngle());
     }
 
     @Override
@@ -180,7 +182,7 @@ public class Robot extends TimedRobot {
         var cmd =
                 Commands.run(
                         () -> m_drivetrain.driveRelative(new ChassisSpeeds(1, 0, 0)), m_drivetrain);
-        cmd.schedule();
+        //cmd.schedule();
     }
 
     @Override
