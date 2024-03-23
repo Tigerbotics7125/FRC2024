@@ -8,6 +8,7 @@ package io.github.tigerbotics7125;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.revrobotics.CANSparkBase.IdleMode;
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
@@ -176,6 +177,8 @@ public class Robot extends TimedRobot {
     public void teleopInit() {
         // Make sure autonomous commands are canceled for teleop
         CommandScheduler.getInstance().cancelAll();
+        var cmd =Commands.run(()->m_drivetrain.driveRelative(new ChassisSpeeds(1,0,0)),m_drivetrain);
+        cmd.schedule();
     }
 
     @Override
